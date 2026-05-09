@@ -2,10 +2,160 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>わたくしの爆速Webサイト</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>月ノ美兎の備忘録ブログ</title>
+    <style>
+        /* 2026年モダン・ミニマルスタイル */
+        :root {
+            --primary-color: #4a90e2;
+            --text-color: #333;
+            --bg-color: #f4f7f9;
+            --white: #ffffff;
+        }
+
+        body {
+            font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background: var(--white);
+            padding: 2rem 1rem;
+            text-align: center;
+            border-bottom: 3px solid var(--primary-color);
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 2rem auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            padding: 0 1rem;
+        }
+
+        /* メインコンテンツ */
+        main {
+            flex: 3;
+            min-width: 300px;
+        }
+
+        article {
+            background: var(--white);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        article h2 {
+            margin-top: 0;
+            color: var(--primary-color);
+        }
+
+        .post-meta {
+            font-size: 0.85rem;
+            color: #888;
+            margin-bottom: 1rem;
+        }
+
+        /* サイドバー */
+        aside {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .sidebar-widget {
+            background: var(--white);
+            padding: 1rem;
+            margin-bottom: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .ad-space {
+            background: #eee;
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px dashed #ccc;
+            color: #999;
+            font-size: 0.8rem;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            background: #333;
+            color: white;
+            margin-top: 3rem;
+        }
+
+        a { color: var(--primary-color); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+
+        @media (max-width: 768px) {
+            .container { flex-direction: column; }
+        }
+    </style>
 </head>
 <body>
-    <h1>インターネットの海へようこそ</h1>
-    <p>Cloudflare Pagesで爆誕したページですわ！</p>
+
+<header>
+    <h1>わたくしのインターネット備忘録</h1>
+    <p>自作キーボードからシュールな話題まで</p>
+</header>
+
+<div class="container">
+    <main>
+        <!-- 記事1 -->
+        <article>
+            <div class="post-meta">2026年5月9日投稿</div>
+            <h2>Cloudflare Pagesでサイトを作りましたわ！</h2>
+            <p>ついにわたくしもWebサイトオーナーです。Vercelも素敵ですが、商用利用の自由度を考えてCloudflareを選びました。これからどんどん更新していきますわよ。</p>
+            <a href="#">続きを読む →</a>
+        </article>
+
+        <!-- 記事2 -->
+        <article>
+            <div class="post-meta">2026年5月8日投稿</div>
+            <h2>最近気になる自作キーボードのスイッチ</h2>
+            <p>打鍵感が「コトコト」というより「スコスコ」している静音リニアスイッチを探しております。AliExpressでの買い物が捗ってしまいますわね……。</p>
+            <a href="#">続きを読む →</a>
+        </article>
+    </main>
+
+    <aside>
+        <div class="sidebar-widget">
+            <h3>プロフィール</h3>
+            <p>月ノ美兎です。趣味は自作キーボードと、インターネットの深淵を覗くことです。丁寧な暮らしを心がけています（嘘）。</p>
+        </div>
+
+        <div class="sidebar-widget">
+            <h3>スポンサーリンク</h3>
+            <div class="ad-space">
+                ここにアフィリエイト広告などを<br>貼り付けることができますわ！
+            </div>
+        </div>
+
+        <div class="sidebar-widget">
+            <h3>リンク</h3>
+            <ul>
+                <li><a href="https://github.com/">GitHub</a></li>
+                <li><a href="#">Twitter (X)</a></li>
+            </ul>
+        </div>
+    </aside>
+</div>
+
+<footer>
+    <p>&copy; 2026 Mito Tsukino. Built with Cloudflare Pages.</p>
+</footer>
+
 </body>
 </html>
