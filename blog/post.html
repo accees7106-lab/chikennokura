@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>BLOG | サイト名</title>
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <script src="/assets/js/common.js" defer></script>
+    <!-- 軽量マークダウン変換ライブラリ -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+    <div id="common-header"></div>
+
+    <main class="container">
+        <!-- ここにマークダウンがHTMLとして流し込まれます -->
+        <article id="markdown-content" class="post-card"></article>
+    </main>
+
+    <div id="common-footer"></div>
+
+    <script>
+            async function loadPost() {
+        const params = new URLSearchParams(window.location.search);
+        const postId = params.get('id');
+
+        if (!postId) {
+            document.getElementById('markdown-content').innerHTML = "記事IDが指定されていませんわ。";
+            return;
+        }
+
+        try {
+            // 先頭に / をつけて、サイトのルートから探しに行くようにします
+            const response = await fetch(`/blog/posts/${postId}.md`);
+            
+            if (!response.ok) {
+                throw new Error(`ファイルが見つかりませんわ！ (Status: ${response.status})`);
+            }
+
+            const mdText = await response.text();
+            
+            // ここで変換して代入！
+            // marked.parse() を使います（ライブラリのバージョンによって書き方が違うことがありますが、2026年現在はこれが主流です）
+            document.getElementById('markdown-content').innerHTML = marked.parse(mdText);
+            
+        } catch (error) {
+            console.error("Error:", error);
+            document.getElementById('markdown-content').innerHTML = `エラーが発生しましたわ：${error.message}`;
+        }
+    }
+    window.addEventListener('DOMContentLoaded', loadPost); // onloadより確実に動くこちらに変更
+    </script>
+</body>
+</html>

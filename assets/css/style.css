@@ -1,0 +1,66 @@
+:root {
+    --primary: #4a90e2;
+    --bg: #f8fafc;
+    --white: #ffffff;
+    --text: #334155;
+}
+
+body {
+    font-family: sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
+    margin: 0;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 2rem auto;
+    display: flex;
+    gap: 2rem;
+    padding: 0 1rem;
+}
+
+main { flex: 3; }
+aside { flex: 1; }
+
+.hero {
+    background: var(--white);
+    padding: 3rem 2rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    text-align: center;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+}
+
+.post-card {
+    background: var(--white);
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 4px rgb(0 0 0 / 0.05);
+}
+
+.post-meta { font-size: 0.8rem; color: #94a3b8; }
+.read-more { color: var(--primary); font-weight: bold; text-decoration: none; }
+
+.sidebar-widget {
+    background: var(--white);
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+}
+
+.ad-box {
+    height: 200px;
+    background: #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px dashed #cbd5e1;
+    font-size: 0.8rem;
+}
+
+@media (max-width: 768px) {
+    .container { flex-direction: column; }
+}

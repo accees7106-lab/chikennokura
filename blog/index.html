@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <!-- 文字化け対策の meta charset は必ず一番上に！ -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BLOG | わたくしのインターネット備忘録</title>
+    
+    <!-- CSSの読み込み：先頭に / をつけてルートから指定します -->
+    <link rel="stylesheet" href="/assets/css/style.css">
+    
+    <!-- 共通パーツ読み込みJS：これもルートから指定します -->
+    <script src="/assets/js/common.js" defer></script>
+</head>
+<body>
+
+    <!-- ヘッダーがここに召喚されます -->
+    <div id="common-header"></div>
+
+    <main class="container">
+     <h2>Article List</h2>
+        <div class="post-list">
+         <!-- 記事1 -->
+            <article class="post-card">
+                <div class="post-meta">2026.05.10</div>
+                <h3><a href="/blog/post.html?id=hello-world">はじめての記事</a></h3>
+            </article>
+
+            <!-- 記事2 -->
+            <article class="post-card">
+                <div class="post-meta">2026.05.11</div>
+                <h3><a href="/blog/post.html?id=my-keyboard">自作キーボードの沼</a></h3>
+            </article>
+
+            <!-- 記事3 -->
+            <article class="post-card">
+                <div class="post-meta">2026.05.12</div>
+                <h3><a href="/blog/post.html?id=saitama-walk">大宮駅周辺の散策</a></h3>
+            </article>
+         </div>
+    </main>
+    <!-- フッターがここに召喚されます -->
+    <div id="common-footer"></div>
+
+</body>
+</html>
