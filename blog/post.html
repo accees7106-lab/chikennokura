@@ -65,6 +65,11 @@
             const header = document.getElementById('post-header');
             if (!header) return;
 
+            // ページタイトルを記事名に更新
+            if (data.title) {
+                document.title = `${data.title} | わたくしのインターネット備忘録`;
+            }
+
             // タグを配列にしてリンク風にする処理
             const tagsHtml = data.tags ? data.tags.replace(/[\[\]]/g, '').split(',').map(tag => {
                 const trimmedTag = tag.trim();

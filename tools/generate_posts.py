@@ -17,12 +17,48 @@ def parse_front_matter(content):
             metadata[key.strip()] = value.strip()
     return metadata
 
+def generate_sitemap(posts, base_dir, base_url):
+    sitemap_file = os.path.join(base_dir, 'sitemap.xml')
+    pages = [
+        '',
+        '/blog/',
+        '/about/',
+        '/data/'
+    ]
+    
+    content = '<?xml version="1.0" encoding="UTF-8"?>\n'
+    content += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+    
+    # 固定ページ
+    for page in pages:
+        content += '  <url>\n'
+        content += f'    <loc>{base_url}{page}</loc>\n'
+        content += '    <priority>0.8</priority>\n'
+        content += '  </url>\n'
+    
+    # 記事ページ
+    for post in posts:
+        content += '  <url>\n'
+        content += f'    <loc>{base_url}/blog/post.html?id={post["id"]}</loc>\n'
+        content += f'    <lastmod>{post.get("date", "")}</lastmod>\n'
+        content += '    <priority>0.5</priority>\n'
+        content += '  </url>\n'
+    
+    content += '</urlset>'
+    
+    with open(sitemap_file, 'w', encoding='utf-8') as f:
+        f.write(content)
+    print(f"Success! Generated {sitemap_file}")
+
 def main():
     posts = []
     # スクリプトの実行場所に関わらず正しいパスを指定
     base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     posts_dir = os.path.join(base_dir, 'blog', 'posts')
     output_file = os.path.join(base_dir, 'blog', 'posts.json')
+    
+    # サイトのベースURL（Search Console用に適宜変更してください）
+    base_url = "https://chikennokura.pages.dev" 
 
     print(f"Scanning directory: {posts_dir}")
 
@@ -53,6 +89,9 @@ def main():
         json.dump(posts, f, ensure_ascii=False, indent=2)
 
     print(f"Success! Generated {output_file} with {len(posts)} articles.")
+    
+    # Sitemap 生成
+    generate_sitemap(posts, base_dir, base_url)
 
 if __name__ == "__main__":
     main()
