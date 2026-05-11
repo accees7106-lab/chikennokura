@@ -17,28 +17,76 @@
     <!-- ヘッダーがここに召喚されます -->
     <div id="common-header"></div>
 
-    <main class="container">
-     <h2>Article List</h2>
-        <div class="post-list">
-         <!-- 記事1 -->
-            <article class="post-card">
-                <div class="post-meta">2026.05.10</div>
-                <h3><a href="/blog/post.html?id=hello-world">はじめての記事</a></h3>
-            </article>
+    <main class="container" style="flex-direction: column; align-items: center;">
+        <div id="filter-info" style="display: none; width: 100%; margin-bottom: 2rem;">
+            <div class="sidebar-widget" style="display: flex; align-items: center; justify-content: space-between; padding: 0.8rem 1.5rem; margin-bottom: 0; border: 1px solid #e2e8f0;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 0.9rem; color: #64748b;">絞り込み中:</span>
+                    <span id="filter-status" style="font-weight: bold; color: var(--primary); background: #ebf5ff; padding: 2px 10px; border-radius: 20px; font-size: 0.9rem;"></span>
+                </div>
+                <a href="/blog/index.html" style="font-size: 0.85rem; color: #94a3b8; text-decoration: none; hover: color: var(--primary);">✕ フィルターを解除</a>
+            </div>
+        </div>
 
-            <!-- 記事2 -->
-            <article class="post-card">
-                <div class="post-meta">2026.05.11</div>
-                <h3><a href="/blog/post.html?id=my-keyboard">自作キーボードの沼</a></h3>
-            </article>
-
-            <!-- 記事3 -->
-            <article class="post-card">
-                <div class="post-meta">2026.05.12</div>
-                <h3><a href="/blog/post.html?id=saitama-walk">大宮駅周辺の散策</a></h3>
-            </article>
-         </div>
+        <div style="width: 100%;">
+            <h2 id="list-title" style="text-align: center; margin-bottom: 2rem;">Article List</h2>
+            <div class="post-list" id="post-list">
+                <!-- 記事一覧がここに動的に生成されます -->
+                <p style="text-align: center;">読み込み中...</p>
+            </div>
+        </div>
     </main>
+
+    <script>
+        async function loadPosts() {
+            const params = new URLSearchParams(window.location.search);
+            const filterTag = params.get('tag');
+            const filterCategory = params.get('category');
+
+            try {
+                const response = await fetch('/blog/posts.json');
+                if (!response.ok) throw new Error('Network response was not ok');
+                let posts = await response.json();
+
+                // 絞り込み処理
+                if (filterTag) {
+                    posts = posts.filter(p => p.tags && p.tags.includes(filterTag));
+                    showFilterStatus(`タグ: #${filterTag}`);
+                } else if (filterCategory) {
+                    posts = posts.filter(p => p.category === filterCategory);
+                    showFilterStatus(`カテゴリ: ${filterCategory}`);
+                }
+
+                // 日付の降順（新しい順）にソート
+                posts.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+                const listContainer = document.getElementById('post-list');
+                if (posts.length === 0) {
+                    listContainer.innerHTML = '<p style="text-align: center; grid-column: span 2;">該当する記事が見つかりませんでしたわ。</p>';
+                } else {
+                    listContainer.innerHTML = posts.map(post => `
+                        <article class="post-card">
+                            <div class="post-meta">${post.date.replace(/-/g, '.')}</div>
+                            <div class="category" style="margin-top: 0.5rem; margin-bottom: 0.5rem;">${post.category || '未分類'}</div>
+                            <h3 style="margin: 0.5rem 0;"><a href="/blog/post.html?id=${post.id}">${post.title}</a></h3>
+                            <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 0;">${post.description || ''}</p>
+                        </article>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('記事一覧の読み込みに失敗しましたわ！', error);
+                document.getElementById('post-list').innerHTML = '<p>記事の読み込みに失敗しましたわ...</p>';
+            }
+        }
+
+        function showFilterStatus(text) {
+            document.getElementById('list-title').innerText = 'Filtered Articles';
+            document.getElementById('filter-info').style.display = 'block';
+            document.getElementById('filter-status').innerText = text;
+        }
+
+        window.addEventListener('DOMContentLoaded', loadPosts);
+    </script>
     <!-- フッターがここに召喚されます -->
     <div id="common-footer"></div>
 

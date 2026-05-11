@@ -1,0 +1,27 @@
+name: Generate Posts JSON
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Generate JSON
+        run: python tools/generate_posts.py
+
+      - name: Commit and push if changed
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add blog/posts.json
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Auto-update posts.json [skip ci]" && git push)
