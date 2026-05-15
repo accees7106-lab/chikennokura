@@ -66,10 +66,11 @@
                 } else {
                     listContainer.innerHTML = posts.map(post => `
                         <article class="post-card">
-                            <div class="post-meta">${post.date.replace(/-/g, '.')}</div>
-                            <div class="category" style="margin-top: 0.5rem; margin-bottom: 0.5rem;">${post.category || '未分類'}</div>
-                            <h3 style="margin: 0.5rem 0;"><a href="/blog/post.html?id=${post.id}">${post.title}</a></h3>
-                            <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 0;">${post.description || ''}</p>
+                            <h3><a href="/blog/post.html?id=${post.id}">${post.title}</a></h3>
+                            <div class="post-meta">投稿日時: ${post.date.replace(/-/g, '.')}</div>
+                            ${post.updated ? `<div class="post-meta">更新日時: ${post.updated.replace(/-/g, '.')}</div>` : ''}
+                            ${post.tags && post.tags.length ? `<div class="tags">${post.tags.map(t => `<a class="tag" href="/blog/?tag=${encodeURIComponent(t)}">#${t}</a>`).join('')}</div>` : ''}
+                            <p class="description">${post.description || ''}</p>
                         </article>
                     `).join('');
                 }
