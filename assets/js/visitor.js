@@ -4,6 +4,7 @@
     var ID_KEY       = 'ckv_id';
     var DONE_KEY     = 'ckv_done';
     var REJECTED_KEY = 'ckv_rej';
+    var OWNER_KEY    = 'ckv_owner';
 
     var GENRES = [
         '巨乳・爆乳',
@@ -142,6 +143,11 @@
     }
 
     window.addEventListener('DOMContentLoaded', function () {
+        // オーナーモード: 計測もポップアップも完全スキップ
+        if (localStorage.getItem(OWNER_KEY)) {
+            return;
+        }
+
         injectStyles();
         getVisitorId();
 

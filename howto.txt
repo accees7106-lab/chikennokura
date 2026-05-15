@@ -8,31 +8,39 @@
 ----------------------------------------------------------------
 
 chikennokura/
-├── index.html                   ← HOMEページ
+├── index.html                        ← HOMEページ（最新記事5件を自動表示）
+├── about/
+│   └── index.html                    ← ABOUTページ（自己紹介・SNSリンク）
 ├── data/
-│   └── index.html               ← DATAページ（アンケート + アナリティクス情報）
+│   └── index.html                    ← DATAページ（アナリティクスダッシュボード）
 ├── blog/
-│   ├── index.html               ← 記事一覧ページ
-│   ├── post.html                ← 記事詳細ページ（全記事で共通）
-│   ├── posts.json               ← 記事メタデータ（自動生成）
+│   ├── index.html                    ← 記事一覧ページ
+│   ├── post.html                     ← 記事詳細ページ（全記事で共通）
+│   ├── posts.json                    ← 記事メタデータ（generate_posts.py で自動生成）
 │   └── posts/
-│       └── *.md                 ← 記事本文（ここに追加していく）
+│       └── *.md                      ← 記事本文（ここに追加していく）
 ├── assets/
 │   ├── components/
-│   │   ├── header.html          ← 全ページ共通ヘッダー＋アナリティクスコード設置場所
-│   │   ├── footer.html          ← 全ページ共通フッター
-│   │   └── sidebar.html         ← 全ページ共通サイドバー（アフィリエイト変更はここ）
+│   │   ├── header.html               ← 全ページ共通ヘッダー（アナリティクスコード設置場所）
+│   │   ├── footer.html               ← 全ページ共通フッター
+│   │   ├── sidebar.html              ← 全ページ共通サイドバー（アフィリエイト変更はここ）
+│   │   └── dlsite-widget.html        ← DLsiteウィジェット専用iframe（sidebarから呼び出す）
 │   ├── css/
-│   │   ├── style.css            ← サイト全体のスタイル
-│   │   ├── post.css             ← 記事詳細ページ専用スタイル
-│   │   └── data.css             ← DATAページ専用スタイル
+│   │   ├── style.css                 ← サイト全体のスタイル
+│   │   ├── post.css                  ← 記事詳細ページ専用スタイル
+│   │   ├── data.css                  ← DATAページ専用スタイル
+│   │   └── about.css                 ← ABOUTページ専用スタイル
 │   └── js/
-│       └── common.js            ← ヘッダー・フッター・サイドバーの自動読み込み
-├── worker.js                    ← Cloudflare Worker（アンケートAPIの処理）
+│       ├── common.js                 ← ヘッダー・フッター・サイドバーの自動読み込み
+│       └── visitor.js                ← 年齢確認ポップアップ + 訪問者トラッキング
+├── worker.js                         ← Cloudflare Worker（訪問者API・統計取得）
 ├── tools/
-│   ├── generate_posts.py        ← posts.json と sitemap.xml を自動生成
-│   └── init-survey-db.sql       ← アンケートDB初期化SQL（初回セットアップ用）
-└── wrangler.jsonc               ← Cloudflare デプロイ設定
+│   ├── generate_posts.py             ← posts.json と sitemap.xml を自動生成
+│   ├── supabase-schema.sql           ← Supabase テーブル初期化SQL（初回のみ）
+│   └── supabase-update-stats.sql     ← Supabase 統計関数の更新SQL（機能追加時に実行）
+├── .dev.vars                         ← ローカル開発用の環境変数（Git管理外）
+├── .assetsignore                     ← Cloudflare にアップしないファイルの除外設定
+└── wrangler.jsonc                    ← Cloudflare デプロイ設定
 
 
 ----------------------------------------------------------------
@@ -41,20 +49,24 @@ chikennokura/
 
 【Cloudflare Workers】✅ 稼働中
   本番URL: https://chikennokura.accees7106.workers.dev
-  役割: 静的ファイルの配信 ＋ アンケートAPIの処理（/api/survey）
+  役割: 静的ファイルの配信 ＋ 訪問者API（/api/visitor/*）
+
+【Supabase】✅ 稼働中
+  プロジェクトURL: https://lkdwegklgfiimpcrurcf.supabase.co
+  役割: 訪問者データ・ページビューログの保存・集計
+  ダッシュボード: https://supabase.com/dashboard/project/lkdwegklgfiimpcrurcf
+
+【DLsite アフィリエイト】✅ 表示中
+  sidebar.html から dlsite-widget.html を iframe で読み込む構成
+
+【Google Search Console】⚠️ 設定待ち
+  設定方法 → 「Google Search Console の設定」セクションを参照
 
 【Cloudflare Web Analytics】⚠️ 設定待ち
   設定方法 → 「アナリティクスの設定」セクションを参照
 
-【Google Search Console】⚠️ 設定待ち
-  設定方法 → 「Google Search Consoleの設定」セクションを参照
-  現状: 認証コードが未設定のためGoogleに認識されていない
-
 【Google Analytics 4】⚠️ 設定待ち
   設定方法 → 「アナリティクスの設定」セクションを参照
-
-【Cloudflare D1（アンケートDB）】⚠️ セットアップ待ち
-  設定方法 → 「アンケートDBのセットアップ」セクションを参照
 
 
 ----------------------------------------------------------------
@@ -62,8 +74,9 @@ chikennokura/
 ----------------------------------------------------------------
 
 【手順】
+
 1. blog/posts/ に Markdown ファイルを作成する
-   ファイル名がそのまま記事のIDになります（例: my-article.md → ?id=my-article）
+   ファイル名がそのまま記事のIDになる（例: my-article.md → ?id=my-article）
 
 2. ファイルの先頭に Front Matter を書く（必須）
 
@@ -76,35 +89,193 @@ chikennokura/
    ---
 
    任意項目:
-     update: 2026-05-16          ← 更新日（あれば表示される）
+     update: 2026-05-16          ← 更新日（あれば記事ページに表示される）
      image: /img/thumb.jpg       ← 記事詳細ページのサムネイル画像
 
 3. Front Matter の下に本文を Markdown で書く
 
-4. ターミナルで以下を実行して posts.json を更新する
+4. ターミナルで posts.json を再生成する
 
    python -X utf8 tools/generate_posts.py
 
-5. デプロイする（後述）
+5. ローカルで確認する（後述）
+
+6. デプロイする（後述）
 
 【記事の削除】
   blog/posts/ から .md ファイルを削除して手順4を実行する
 
+【HOMEページの最新記事について】
+  index.html が /blog/posts.json を自動取得して
+  日付の新しい順に5記事を自動表示する。
+  posts.json を更新してデプロイすれば自動的に反映される。
+
 
 ----------------------------------------------------------------
-  アフィリエイトリンクを変更する
+  記事内で使えるショートコードパーツ
 ----------------------------------------------------------------
 
-【ファイル】
-  assets/components/sidebar.html
+記事の Markdown ファイル内で以下の記法を使うと、
+自動的にリッチなパーツとして表示されます。
 
-「アフィリエイトウィジェット」と書かれたコメントブロック内の
-<script> タグを差し替えるだけで、全ページのサイドバー広告が一括変更される。
+【YouTube 動画埋め込み】
 
-DLsite ウィジェットの主な設定項目:
-  "count": "5"         → 表示件数
-  "period": "month"    → 集計期間（"week", "day" も可）
-  "site": "maniax"     → 対象サイト（"books", "girls" なども可）
+  ::youtube[動画ID]
+  ::youtube[https://www.youtube.com/watch?v=dQw4w9WgXcQ]
+  ::youtube[https://youtu.be/dQw4w9WgXcQ]
+
+  動画ID・通常URL・短縮URLのいずれでも使えます。
+  16:9 レスポンシブ表示になります。
+
+【注釈ボックス（4種）】
+
+  ::note[ここにノートの内容]          ← 青（補足情報）
+  ::info[ここに情報の内容]            ← 緑（情報・お知らせ）
+  ::tip[ここにヒントの内容]           ← 黄（ヒント・コツ）
+  ::warning[ここに注意内容]           ← 赤（注意・警告）
+
+【リンクボタン】
+
+  ::button[ボタンテキスト | https://example.com]
+
+  → 青いボタンとして表示されます。別タブで開きます。
+
+【リンクカード】
+
+  ::card[タイトル | 説明文 | https://example.com]
+
+  → タイトル・説明・URLを表示する横長カードになります。
+
+【X（Twitter）ポストへのリンク】
+
+  ::tweet[https://x.com/username/status/1234567890]
+
+  → Xのアイコン付きリンクカードになります。
+
+【折りたたみアコーディオン】
+
+  :::details[クリックで展開するタイトル]
+  ここに詳細内容を書きます。
+  **Markdown** も使えます。
+  :::
+
+  → クリックで開閉できる折りたたみブロックになります。
+  → 中に他のショートコードも入れられます（入れ子OK）。
+
+【使用例（記事内での書き方）】
+
+  # 記事タイトル
+
+  ::note[この記事はPythonの環境構築を解説しています]
+
+  ## デモ動画
+
+  ::youtube[dQw4w9WgXcQ]
+
+  ## 参考リンク
+
+  ::card[公式ドキュメント | Pythonの公式ドキュメントです | https://docs.python.org/ja/]
+
+  :::details[詳しい手順を見る]
+  1. Python をインストールする
+  2. pip でパッケージを入れる
+  3. スクリプトを実行する
+  :::
+
+  ::button[公式サイトはこちら | https://www.python.org]
+
+----------------------------------------------------------------
+  アフィリエイトリンクを変更する（DLsite）
+----------------------------------------------------------------
+
+【設定ファイル】
+  assets/components/dlsite-widget.html
+
+このファイル内の blogparts オブジェクトを編集する:
+
+  blogparts = {
+    "base": "https://www.dlsite.com/",
+    "site": "maniax",      ← 対象サイト（"books", "girls" なども可）
+    "count": "5",          ← 表示件数
+    "period": "month",     ← 集計期間（"week", "day" も可）
+    ...
+  };
+
+※ sidebar.html から iframe で読み込んでいるため、
+  sidebar.html 自体は変更不要。
+  ウィジェット表示の高さを変えたい場合は sidebar.html の
+  iframe の height 属性を変更する（現在: 900px）。
+
+
+----------------------------------------------------------------
+  訪問者トラッキングの仕組み
+----------------------------------------------------------------
+
+【概要】
+  サイトに訪れた人が年齢確認ポップアップに答えると、
+  Supabase にデータが保存される。
+  DATAページでリアルタイムに集計結果を確認できる。
+
+【保存されるデータ】
+  ・訪問者ID（localStorage で管理、ブラウザをまたいだ追跡はしない）
+  ・18歳以上かどうか（is_adult）
+  ・好みのジャンル（preferences）
+  ・閲覧したページのパスと流入元（events テーブル）
+
+【localStorage のキー一覧】
+  ckv_id    → 訪問者ID（ランダム生成。削除すると新規訪問者として扱われる）
+  ckv_done  → 年齢確認・ジャンル選択の完了フラグ
+  ckv_rej   → 「いいえ」を選択した際のフラグ（次回も壁が表示される）
+  ckv_owner → 自分の閲覧除外フラグ（後述）
+
+【自分の閲覧をデータから除外する方法】
+  1. DATAページ（/data/）を開く
+  2. ページ最下部の「⚙️ 計測設定」トグルをオンにする
+  3. 「除外中」と表示されれば設定完了
+
+  → 以降、このブラウザからのアクセスは統計に含まれなくなる
+  → 年齢確認ポップアップも表示されなくなる
+  → 解除したい場合は同じトグルをオフにする
+
+
+----------------------------------------------------------------
+  Supabase の管理
+----------------------------------------------------------------
+
+【ダッシュボード】
+  https://supabase.com/dashboard/project/lkdwegklgfiimpcrurcf
+
+【テーブル構成】
+  visitor_profiles  → 訪問者ごとの年齢確認・ジャンル情報
+  events            → ページビューなどのイベントログ
+
+【統計関数の更新】
+  get_visitor_stats() という PostgreSQL 関数が統計を集計している。
+  機能を追加・変更した場合は以下を実行する:
+
+  1. https://supabase.com/dashboard/project/lkdwegklgfiimpcrurcf/sql/new を開く
+  2. tools/supabase-update-stats.sql の内容を貼り付けて実行
+
+【シークレットキーの設定（初回 or 再設定時）】
+  PowerShell で以下を実行する（BOMエラー防止のため ASCII 設定が必要）:
+
+  [Console]::InputEncoding  = [Text.Encoding]::ASCII
+  [Console]::OutputEncoding = [Text.Encoding]::ASCII
+
+  $url = "https://lkdwegklgfiimpcrurcf.supabase.co"
+  $key = "eyJhbGci..."   ← Supabase の anon key
+
+  $url | npx wrangler secret put SUPABASE_URL
+  $key | npx wrangler secret put SUPABASE_ANON_KEY
+
+  ※ PowerShell の echo や Write-Output 経由で設定すると
+    BOM文字（U+FEFF）が混入してURLが壊れるため上記の方法を使うこと
+
+【ローカル開発用の設定】
+  .dev.vars ファイルに以下を記述する（Gitに含めない）:
+
+  SUPABASE_URL=https://lkdwegklgfiimpcrurcf.supabase.co
+  SUPABASE_ANON_KEY=eyJhbGci...
 
 
 ----------------------------------------------------------------
@@ -112,6 +283,7 @@ DLsite ウィジェットの主な設定項目:
 ----------------------------------------------------------------
 
 【手順】
+
 1. https://search.google.com/search-console を開く
 
 2. 「プロパティを追加」→「URLプレフィックス」を選択
@@ -142,7 +314,7 @@ DLsite ウィジェットの主な設定項目:
 3. URL に https://chikennokura.accees7106.workers.dev を入力
 4. 「測定ID」（G-XXXXXXXXXX）をコピー
 5. assets/components/header.html を開き、GA4 のコメントブロックを探す
-6. コメントアウト（<!-- -->）を外して、G-XXXXXXXXXX を測定IDに置き換える
+6. コメントアウト（<!-- -->）を外して G-XXXXXXXXXX を測定IDに置き換える
 7. デプロイする
 
 【Cloudflare Web Analytics】
@@ -157,74 +329,43 @@ DLsite ウィジェットの主な設定項目:
 
 
 ----------------------------------------------------------------
-  アンケートDB のセットアップ（初回のみ）
-----------------------------------------------------------------
-
-アンケート機能を使うには Cloudflare D1 データベースの作成が必要です。
-以下の手順を一度だけ実行してください。
-
-【手順】
-
-1. D1 データベースを作成する
-   ターミナルで実行:
-
-   npx wrangler d1 create chikennokura-survey
-
-   実行後に表示される database_id をコピーする（例: abc123-...）
-
-2. wrangler.jsonc を開き、以下の箇所に貼り付ける
-
-   "database_id": "REPLACE_WITH_YOUR_DATABASE_ID"
-                   ↓
-   "database_id": "abc123-..."  ← コピーした値
-
-3. テーブルを作成する（本番環境）
-
-   npx wrangler d1 execute chikennokura-survey --file=tools/init-survey-db.sql
-
-4. テーブルを作成する（ローカル確認用）
-
-   npx wrangler d1 execute chikennokura-survey --local --file=tools/init-survey-db.sql
-
-5. デプロイする
-
-   npx wrangler deploy
-
-以降はアンケートの回答が自動的に D1 に保存され、
-data/ ページでリアルタイムに集計結果が表示されます。
-
-
-----------------------------------------------------------------
   ローカルで動作確認する
 ----------------------------------------------------------------
 
-【自動リロードあり（推奨・アンケートAPIなし）】
+【Workerも含めてローカルで動かす（推奨）】
+
+  cd G:\マイドライブ\HandmadeApplication\chikennokura
+  npx wrangler dev
+
+  → http://localhost:8787 で確認できる
+  → Supabase へのアクセスも含め完全に動作する
+  → ファイルを保存すると自動で再起動する
+
+  ※ 日本語パスによる無限リロードを防ぐため wrangler.jsonc に
+    "dev": { "persist_to": "C:\\wrangler-state" } を設定済み。
+    もし問題が起きたら .wrangler フォルダを削除してから再起動する。
+
+【静的ファイルのみ確認する場合（APIは動かない）】
 
   npx live-server
 
   → http://127.0.0.1:8080 で確認できる
-  → ファイル保存のたびに自動リロード
-  ※ Worker（API）は動かないため、アンケート送信・結果表示はエラーになる
-
-【Workerも含めてローカルで動かす（アンケートAPIあり）】
-
-  npx wrangler dev
-
-  → http://localhost:8787 で確認できる
-  → アンケートの送信・集計も動作する
-  ※ ループする場合は Ctrl+C で止めて live-server を使う
+  → Worker（/api/*）は動かないため、DATAページのデータ取得はエラーになる
+  → 見た目の確認だけに使う
 
 
 ----------------------------------------------------------------
   Cloudflare にデプロイする（本番公開）
 ----------------------------------------------------------------
 
-【通常のデプロイ手順】
+【デプロイ手順】
 
   cd G:\マイドライブ\HandmadeApplication\chikennokura
   npx wrangler deploy
 
   → 本番URL: https://chikennokura.accees7106.workers.dev
+
+  ※ デプロイは明示的に指示したときだけ行う
 
 【初回ログインが必要な場合】
 
@@ -235,6 +376,11 @@ data/ ページでリアルタイムに集計結果が表示されます。
   git add .
   git commit -m "変更内容のメモ"
   git push origin main
+
+【.assetsignore について】
+  Cloudflare にアップロードしないファイルを指定するファイル。
+  .gitignore とは別物（どちらも必要）。
+  tools/ や .dev.vars などが除外対象になっている。
 
 
 ----------------------------------------------------------------
@@ -248,21 +394,40 @@ data/ ページでリアルタイムに集計結果が表示されます。
     --bg: #f8fafc;         ← ページ背景色
     --text: #334155;       ← 本文テキスト色
 
-【記事詳細ページ】   assets/css/post.css
+【各ページ専用スタイル】
+  記事詳細:   assets/css/post.css
+  DATAページ: assets/css/data.css
+  ABOUTページ: assets/css/about.css
 
-【DATAページ】       assets/css/data.css
-
-【ヘッダー/フッター】
-  assets/components/header.html または footer.html 内の <style> を直接編集する
+【ヘッダー・フッター】
+  assets/components/header.html または footer.html を直接編集する
 
 
 ----------------------------------------------------------------
   新しいページを追加する
 ----------------------------------------------------------------
 
-1. template.html をコピーして新しいページを作る
-2. <aside id="common-sidebar"></aside> を置くだけでサイドバーが自動表示される
-3. ナビゲーションに追加したい場合は assets/components/header.html の <nav> を編集する
+1. 既存のページ（例: about/index.html）をコピーして新しいページを作る
+
+2. <head> に必要な CSS を追加する
+   <link rel="stylesheet" href="/assets/css/style.css">
+   <script src="/assets/js/common.js" defer></script>
+   <script src="/assets/js/visitor.js" defer></script>
+
+3. <body> の構造:
+   <div id="common-header"></div>
+   <div class="container">
+       <main>
+           ここにページの内容
+       </main>
+       <aside id="common-sidebar"></aside>
+   </div>
+   <div id="common-footer"></div>
+
+4. ナビゲーションに追加したい場合は
+   assets/components/header.html の <nav> を編集する
+
+5. 専用 CSS が必要なら assets/css/ に追加して <link> で読み込む
 
 
 ----------------------------------------------------------------
@@ -272,11 +437,11 @@ data/ ページでリアルタイムに集計結果が表示されます。
 # posts.json とサイトマップを再生成
 python -X utf8 tools/generate_posts.py
 
-# ローカル確認（自動リロードあり）
-npx live-server
-
-# ローカル確認（Worker API含む）
+# ローカル確認（Worker + Supabase API 含む・推奨）
 npx wrangler dev
+
+# ローカル確認（静的ファイルのみ）
+npx live-server
 
 # 本番デプロイ
 npx wrangler deploy
@@ -284,18 +449,24 @@ npx wrangler deploy
 # Cloudflare ログイン（初回）
 npx wrangler login
 
-# D1 データベース作成（初回）
-npx wrangler d1 create chikennokura-survey
-
-# D1 テーブル初期化（初回・本番）
-npx wrangler d1 execute chikennokura-survey --file=tools/init-survey-db.sql
-
-# D1 テーブル初期化（初回・ローカル）
-npx wrangler d1 execute chikennokura-survey --local --file=tools/init-survey-db.sql
+# Supabase シークレット再設定（BOM防止）
+[Console]::InputEncoding  = [Text.Encoding]::ASCII
+[Console]::OutputEncoding = [Text.Encoding]::ASCII
+"https://lkdwegklgfiimpcrurcf.supabase.co" | npx wrangler secret put SUPABASE_URL
+"eyJhbGci..." | npx wrangler secret put SUPABASE_ANON_KEY
 
 # Git 保存 & プッシュ
 git add .
 git commit -m "コメント"
 git push origin main
+
+================================================================
+  未設定のもの（今後の対応リスト）
+================================================================
+
+[ ] Google Search Console の認証コードを header.html に設定する
+[ ] Google Analytics 4 の測定IDを header.html に設定する
+[ ] Cloudflare Web Analytics のスクリプトを header.html に設定する
+[ ] about/index.html の自己紹介・SNSリンクを実際の情報に更新する
 
 ================================================================

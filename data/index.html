@@ -95,33 +95,17 @@
                 </div>
             </section>
 
-            <!-- ========== 外部アナリティクス ========== -->
-            <section class="data-card">
-                <h2 class="data-card-title">📈 外部アナリティクス</h2>
-                <p class="data-card-desc">連携中の外部サービスの設定状況です</p>
-                <div class="analytics-grid">
-                    <div class="analytics-item">
-                        <div class="analytics-icon">☁️</div>
-                        <div class="analytics-name">Cloudflare Web Analytics</div>
-                        <div class="analytics-status status-pending">設定待ち</div>
-                        <p class="analytics-desc">Cloudflare ダッシュボードで確認できます。</p>
-                        <a href="https://dash.cloudflare.com" target="_blank" class="analytics-link">ダッシュボードを開く →</a>
-                    </div>
-                    <div class="analytics-item">
-                        <div class="analytics-icon">📊</div>
-                        <div class="analytics-name">Google Analytics 4</div>
-                        <div class="analytics-status status-ok">設定済み</div>
-                        <p class="analytics-desc">行動フロー・デバイス・詳細な離脱率はGAで確認できます。</p>
-                        <a href="https://analytics.google.com" target="_blank" class="analytics-link">GA4 を開く →</a>
-                    </div>
-                    <div class="analytics-item">
-                        <div class="analytics-icon">🔍</div>
-                        <div class="analytics-name">Google Search Console</div>
-                        <div class="analytics-status status-pending">設定待ち</div>
-                        <p class="analytics-desc">認証コードを header.html に設定すると有効になります。</p>
-                        <a href="https://search.google.com/search-console" target="_blank" class="analytics-link">Search Console を開く →</a>
-                    </div>
+            <!-- ========== オーナー設定 ========== -->
+            <section class="data-card" style="padding:1rem 2rem;">
+                <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap;">
+                    <span style="font-size:0.9rem;font-weight:bold;color:#475569;">⚙️ 計測設定</span>
+                    <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;font-size:0.9rem;color:#334155;">
+                        <input type="checkbox" id="owner-toggle" style="accent-color:#4a90e2;width:16px;height:16px;">
+                        自分の閲覧をデータから除外する
+                    </label>
+                    <span id="owner-status"></span>
                 </div>
+                <p style="font-size:0.8rem;color:#94a3b8;margin:0.5rem 0 0;">このブラウザにのみ適用されます。有効にすると自分のアクセスが統計に含まれなくなります。</p>
             </section>
 
         </main>
@@ -294,7 +278,40 @@
         return (icons[g] || '') + ' ' + g;
     }
 
-    window.addEventListener('DOMContentLoaded', loadStats);
+    window.addEventListener('DOMContentLoaded', function () {
+        loadStats();
+        initOwnerToggle();
+    });
+
+    function initOwnerToggle() {
+        var OWNER_KEY = 'ckv_owner';
+        var toggle    = document.getElementById('owner-toggle');
+        var statusEl  = document.getElementById('owner-status');
+
+        function applyStatus(active) {
+            if (active) {
+                statusEl.textContent = '除外中';
+                statusEl.style.cssText = 'font-size:0.78rem;padding:2px 10px;border-radius:99px;background:#dcfce7;color:#16a34a;font-weight:bold;';
+            } else {
+                statusEl.textContent = '記録中';
+                statusEl.style.cssText = 'font-size:0.78rem;padding:2px 10px;border-radius:99px;background:#f1f5f9;color:#94a3b8;';
+            }
+        }
+
+        var isActive = !!localStorage.getItem(OWNER_KEY);
+        toggle.checked = isActive;
+        applyStatus(isActive);
+
+        toggle.addEventListener('change', function () {
+            if (toggle.checked) {
+                localStorage.setItem(OWNER_KEY, '1');
+                applyStatus(true);
+            } else {
+                localStorage.removeItem(OWNER_KEY);
+                applyStatus(false);
+            }
+        });
+    }
     </script>
 </body>
 </html>

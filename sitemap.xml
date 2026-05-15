@@ -17,6 +17,16 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://chikennokura.accees7106.workers.dev/blog/post.html?id=real-hello-world</loc>
+    <lastmod>2026-05-15</lastmod>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://chikennokura.accees7106.workers.dev/blog/post.html?id=shortcode-test</loc>
+    <lastmod>2026-05-15</lastmod>
+    <priority>0.5</priority>
+  </url>
+  <url>
     <loc>https://chikennokura.accees7106.workers.dev/blog/post.html?id=saitama-walk</loc>
     <lastmod>2026-05-12</lastmod>
     <priority>0.5</priority>

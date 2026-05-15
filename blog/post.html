@@ -105,7 +105,112 @@
         }
 
         function renderBody(content) {
-            document.getElementById('post-body').innerHTML = marked.parse(content);
+            document.getElementById('post-body').innerHTML = marked.parse(processShortcodes(content));
+        }
+
+        /* ============================================================
+           ショートコード処理
+           記事の Markdown 内で使える独自パーツ
+        ============================================================ */
+        function processShortcodes(text) {
+
+            /* ── 折りたたみ（マルチライン・再帰対応）────────────────
+               :::details[タイトル]
+               内容（Markdown OK）
+               :::
+            ──────────────────────────────────────────────────────── */
+            text = text.replace(/:::details\[([^\]]*)\]\n([\s\S]*?)\n:::/g, function(_, title, body) {
+                var inner = marked.parse(processShortcodes(body.trim()));
+                return '\n<details class="sc-details">'
+                    + '<summary class="sc-details-summary">' + title.trim() + '</summary>'
+                    + '<div class="sc-details-body">' + inner + '</div>'
+                    + '</details>\n';
+            });
+
+            /* ── YouTube 埋め込み ─────────────────────────────────
+               ::youtube[動画ID または URL]
+            ──────────────────────────────────────────────────────── */
+            text = text.replace(/::youtube\[([^\]]+)\]/g, function(_, raw) {
+                var id = extractYouTubeId(raw.trim());
+                if (!id) return raw;
+                return '\n<div class="sc-video-wrap">'
+                    + '<iframe src="https://www.youtube.com/embed/' + id + '"'
+                    + ' allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"'
+                    + ' allowfullscreen loading="lazy"></iframe>'
+                    + '</div>\n';
+            });
+
+            /* ── 注釈ボックス 4種 ────────────────────────────────
+               ::note[テキスト]
+               ::warning[テキスト]
+               ::info[テキスト]
+               ::tip[テキスト]
+            ──────────────────────────────────────────────────────── */
+            [
+                ['note',    '📝', 'ノート'],
+                ['warning', '⚠️', '注意'],
+                ['info',    'ℹ️', '情報'],
+                ['tip',     '💡', 'ヒント'],
+            ].forEach(function(b) {
+                text = text.replace(new RegExp('::' + b[0] + '\\[([^\\]]+)\\]', 'g'), function(_, msg) {
+                    return '\n<div class="sc-box sc-box--' + b[0] + '">'
+                        + '<span class="sc-box-icon">' + b[1] + '</span>'
+                        + '<span class="sc-box-label">' + b[2] + '</span>'
+                        + '<span class="sc-box-text">' + msg.trim() + '</span>'
+                        + '</div>\n';
+                });
+            });
+
+            /* ── リンクボタン ─────────────────────────────────────
+               ::button[ボタンテキスト | URL]
+            ──────────────────────────────────────────────────────── */
+            text = text.replace(/::button\[([^\|]+)\|([^\]]+)\]/g, function(_, label, url) {
+                return '\n<div class="sc-button-wrap">'
+                    + '<a href="' + safeUrl(url.trim()) + '" class="sc-button" target="_blank" rel="noopener noreferrer">'
+                    + label.trim()
+                    + '</a></div>\n';
+            });
+
+            /* ── リンクカード ─────────────────────────────────────
+               ::card[タイトル | 説明文 | URL]
+            ──────────────────────────────────────────────────────── */
+            text = text.replace(/::card\[([^\|]+)\|([^\|]+)\|([^\]]+)\]/g, function(_, title, desc, url) {
+                var u = url.trim();
+                return '\n<a href="' + safeUrl(u) + '" class="sc-card" target="_blank" rel="noopener noreferrer">'
+                    + '<div class="sc-card-title">' + title.trim() + '</div>'
+                    + '<div class="sc-card-desc">' + desc.trim() + '</div>'
+                    + '<div class="sc-card-url">' + u + '</div>'
+                    + '</a>\n';
+            });
+
+            /* ── X（Twitter）リンクカード ─────────────────────────
+               ::tweet[ツイートURL]
+            ──────────────────────────────────────────────────────── */
+            text = text.replace(/::tweet\[([^\]]+)\]/g, function(_, url) {
+                var u = url.trim();
+                return '\n<a href="' + safeUrl(u) + '" class="sc-tweet" target="_blank" rel="noopener noreferrer">'
+                    + '<span class="sc-tweet-icon">𝕏</span>'
+                    + '<span class="sc-tweet-text">ポストを見る</span>'
+                    + '<span class="sc-tweet-url">' + u + '</span>'
+                    + '</a>\n';
+            });
+
+            return text;
+        }
+
+        /* YouTube の動画ID を URL・短縮URL・IDのいずれからでも抽出 */
+        function extractYouTubeId(raw) {
+            var m;
+            m = raw.match(/[?&]v=([A-Za-z0-9_-]{11})/);   if (m) return m[1];
+            m = raw.match(/youtu\.be\/([A-Za-z0-9_-]{11})/); if (m) return m[1];
+            m = raw.match(/embed\/([A-Za-z0-9_-]{11})/);    if (m) return m[1];
+            if (/^[A-Za-z0-9_-]{11}$/.test(raw))            return raw;
+            return null;
+        }
+
+        /* javascript: URL を弾く */
+        function safeUrl(u) {
+            return /^javascript:/i.test(u) ? '#' : u;
         }
 
         window.addEventListener('DOMContentLoaded', loadPost);
