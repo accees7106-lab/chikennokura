@@ -14,18 +14,9 @@
   ],
 
   // -------------------------------------------------------
-  // D1 データベース（アンケート保存用）
-  // セットアップ手順:
-  //   1. npx wrangler d1 create chikennokura-survey
-  //   2. 表示された database_id を下の "REPLACE_WITH_YOUR_DATABASE_ID" に貼り付ける
-  //   3. npx wrangler d1 execute chikennokura-survey --file=tools/init-survey-db.sql
-  //   4. npx wrangler d1 execute chikennokura-survey --local --file=tools/init-survey-db.sql
+  // Supabase 接続情報は wrangler secret として管理しています
+  //   npx wrangler secret put SUPABASE_URL
+  //   npx wrangler secret put SUPABASE_ANON_KEY
+  // ローカル開発時は .dev.vars に記述してください
   // -------------------------------------------------------
-  "d1_databases": [
-    {
-      "binding": "DB",
-      "database_name": "chikennokura-survey",
-      "database_id": "8254354d-713f-416a-b155-6b6ad697073c"
-    }
-  ]
 }

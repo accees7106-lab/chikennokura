@@ -1,10 +1,9 @@
 /**
  * chikennokura - Cloudflare Worker
  *
- * /api/survey            POST  アンケート回答を保存する
- * /api/survey/results    GET   アンケート集計結果を返す
- * /api/visitor/profile   POST  訪問者プロフィール（年齢確認 + 性癖）を保存する
- * /api/visitor/pageview  POST  ページビューを記録する
+ * /api/visitor/profile   POST  訪問者プロフィール（年齢確認 + 性癖）を保存
+ * /api/visitor/pageview  POST  ページビューを記録
+ * /api/visitor/stats     GET   訪問者統計を返す（Supabase RPC）
  * それ以外                →    静的ファイル（assets）を返す
  */
 
@@ -18,45 +17,8 @@ export default {
       'Access-Control-Allow-Headers': 'Content-Type',
     };
 
-    // プリフライト
     if (request.method === 'OPTIONS') {
       return new Response(null, { headers: cors });
-    }
-
-    // ---- アンケート送信 ----
-    if (url.pathname === '/api/survey' && request.method === 'POST') {
-      try {
-        const body = await request.json();
-        const { content, discovery, frequency, age } = body;
-
-        if (!content || !discovery || !frequency || !age) {
-          return json({ error: '全項目を入力してください' }, 400, cors);
-        }
-
-        await env.DB.prepare(
-          `INSERT INTO survey_responses (content, discovery, frequency, age, submitted_at)
-           VALUES (?, ?, ?, ?, ?)`
-        ).bind(content, discovery, frequency, age, new Date().toISOString()).run();
-
-        return json({ success: true }, 200, cors);
-      } catch (e) {
-        return json({ error: e.message }, 500, cors);
-      }
-    }
-
-    // ---- アンケート集計 ----
-    if (url.pathname === '/api/survey/results' && request.method === 'GET') {
-      try {
-        const total  = await env.DB.prepare('SELECT COUNT(*) as n FROM survey_responses').first('n');
-        const byContent   = await agg(env, 'content');
-        const byDiscovery = await agg(env, 'discovery');
-        const byFrequency = await agg(env, 'frequency');
-        const byAge       = await agg(env, 'age');
-
-        return json({ total, byContent, byDiscovery, byFrequency, byAge }, 200, cors);
-      } catch (e) {
-        return json({ error: e.message }, 500, cors);
-      }
     }
 
     // ---- 訪問者プロフィール保存 ----
@@ -65,19 +27,13 @@ export default {
         const { visitor_id, is_adult, preferences } = await request.json();
         if (!visitor_id) return json({ error: 'visitor_id required' }, 400, cors);
 
-        await env.DB.prepare(
-          `INSERT INTO visitor_profiles (visitor_id, is_adult, preferences, created_at)
-           VALUES (?, ?, ?, ?)
-           ON CONFLICT(visitor_id) DO UPDATE SET
-             is_adult = excluded.is_adult,
-             preferences = excluded.preferences`
-        ).bind(
+        const res = await sb(env, 'POST', '/visitor_profiles', {
           visitor_id,
-          is_adult ? 1 : 0,
-          JSON.stringify(preferences || []),
-          new Date().toISOString()
-        ).run();
+          is_adult,
+          preferences: preferences ?? [],
+        }, { 'Prefer': 'resolution=merge-duplicates,return=minimal' });
 
+        if (!res.ok) throw new Error(await res.text());
         return json({ success: true }, 200, cors);
       } catch (e) {
         return json({ error: e.message }, 500, cors);
@@ -90,12 +46,25 @@ export default {
         const { visitor_id, path, referrer } = await request.json();
         if (!visitor_id || !path) return json({ error: 'visitor_id and path required' }, 400, cors);
 
-        await env.DB.prepare(
-          `INSERT INTO page_views (visitor_id, path, referrer, viewed_at)
-           VALUES (?, ?, ?, ?)`
-        ).bind(visitor_id, path, referrer || null, new Date().toISOString()).run();
+        const res = await sb(env, 'POST', '/events', {
+          visitor_id,
+          event_type: 'pageview',
+          properties: { path, referrer: referrer ?? null },
+        }, { 'Prefer': 'return=minimal' });
 
+        if (!res.ok) throw new Error(await res.text());
         return json({ success: true }, 200, cors);
+      } catch (e) {
+        return json({ error: e.message }, 500, cors);
+      }
+    }
+
+    // ---- 訪問者統計（Supabase PostgreSQL 関数を呼ぶ） ----
+    if (url.pathname === '/api/visitor/stats' && request.method === 'GET') {
+      try {
+        const res = await sb(env, 'POST', '/rpc/get_visitor_stats', {});
+        if (!res.ok) throw new Error(await res.text());
+        return json(await res.json(), 200, cors);
       } catch (e) {
         return json({ error: e.message }, 500, cors);
       }
@@ -106,12 +75,18 @@ export default {
   },
 };
 
-async function agg(env, col) {
-  const r = await env.DB.prepare(
-    `SELECT ${col} as label, COUNT(*) as count
-     FROM survey_responses GROUP BY ${col} ORDER BY count DESC`
-  ).all();
-  return r.results;
+/** Supabase REST API 呼び出しヘルパー */
+function sb(env, method, path, body, extra = {}) {
+  return fetch(`${env.SUPABASE_URL}/rest/v1${path}`, {
+    method,
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': env.SUPABASE_ANON_KEY,
+      'Authorization': `Bearer ${env.SUPABASE_ANON_KEY}`,
+      ...extra,
+    },
+    body: JSON.stringify(body),
+  });
 }
 
 function json(data, status, headers) {
