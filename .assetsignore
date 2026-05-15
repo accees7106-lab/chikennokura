@@ -1,0 +1,26 @@
+# Git internals
+.git
+
+# Wrangler temp files
+.wrangler
+
+# Deployment & config files
+.gitignore
+.assetsignore
+.dev.vars*
+.env*
+wrangler.jsonc
+
+# Server-side scripts (not needed publicly)
+manage.py
+tools
+
+# Internal docs
+howto.txt
+template.html
+
+# Markdown source files (compiled to posts.json)
+blog/posts/*.md
+
+# Dependencies
+node_modules
