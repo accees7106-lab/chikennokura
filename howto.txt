@@ -1,12 +1,301 @@
-🎓 新しい運用ステップ（ワンクッション形式）
-記事を書く: blog/posts/ に Markdown ファイルを追加します。
-魔法を唱える（ワンクッション！）: ターミナルで以下のコマンドを打ちます。
+================================================================
+  chikennokura サイト 運用マニュアル
+  最終更新: 2026-05-15
+================================================================
 
-bash
-python manage.py update
+----------------------------------------------------------------
+  サイト構成の概要
+----------------------------------------------------------------
 
-これで、わたくしが記事をスキャンして posts.json を最新状態に書き換えますわ！
-世界に放つ: Git でプッシュすれば、Webサイトに反映されます。
-🛠️ 変更のポイント
-manage.py の新設: あなたが「よし、更新しよう！」と思ったタイミングで実行できる専用コマンドを作りました。
-GitHub連携の調整: 勝手に裏で動くのではなく、あなたが manage.py で生成した結果を自分の手でプッシュする（あるいはGitHub上で手動実行する）という、意志のあるフローに変更いたしました。
+chikennokura/
+├── index.html                   ← HOMEページ
+├── data/
+│   └── index.html               ← DATAページ（アンケート + アナリティクス情報）
+├── blog/
+│   ├── index.html               ← 記事一覧ページ
+│   ├── post.html                ← 記事詳細ページ（全記事で共通）
+│   ├── posts.json               ← 記事メタデータ（自動生成）
+│   └── posts/
+│       └── *.md                 ← 記事本文（ここに追加していく）
+├── assets/
+│   ├── components/
+│   │   ├── header.html          ← 全ページ共通ヘッダー＋アナリティクスコード設置場所
+│   │   ├── footer.html          ← 全ページ共通フッター
+│   │   └── sidebar.html         ← 全ページ共通サイドバー（アフィリエイト変更はここ）
+│   ├── css/
+│   │   ├── style.css            ← サイト全体のスタイル
+│   │   ├── post.css             ← 記事詳細ページ専用スタイル
+│   │   └── data.css             ← DATAページ専用スタイル
+│   └── js/
+│       └── common.js            ← ヘッダー・フッター・サイドバーの自動読み込み
+├── worker.js                    ← Cloudflare Worker（アンケートAPIの処理）
+├── tools/
+│   ├── generate_posts.py        ← posts.json と sitemap.xml を自動生成
+│   └── init-survey-db.sql       ← アンケートDB初期化SQL（初回セットアップ用）
+└── wrangler.jsonc               ← Cloudflare デプロイ設定
+
+
+----------------------------------------------------------------
+  現在の外部サービス連携状況
+----------------------------------------------------------------
+
+【Cloudflare Workers】✅ 稼働中
+  本番URL: https://chikennokura.accees7106.workers.dev
+  役割: 静的ファイルの配信 ＋ アンケートAPIの処理（/api/survey）
+
+【Cloudflare Web Analytics】⚠️ 設定待ち
+  設定方法 → 「アナリティクスの設定」セクションを参照
+
+【Google Search Console】⚠️ 設定待ち
+  設定方法 → 「Google Search Consoleの設定」セクションを参照
+  現状: 認証コードが未設定のためGoogleに認識されていない
+
+【Google Analytics 4】⚠️ 設定待ち
+  設定方法 → 「アナリティクスの設定」セクションを参照
+
+【Cloudflare D1（アンケートDB）】⚠️ セットアップ待ち
+  設定方法 → 「アンケートDBのセットアップ」セクションを参照
+
+
+----------------------------------------------------------------
+  記事を追加・更新する
+----------------------------------------------------------------
+
+【手順】
+1. blog/posts/ に Markdown ファイルを作成する
+   ファイル名がそのまま記事のIDになります（例: my-article.md → ?id=my-article）
+
+2. ファイルの先頭に Front Matter を書く（必須）
+
+   ---
+   title: 記事のタイトル
+   description: 一覧ページに表示される説明文
+   date: 2026-05-15
+   category: カテゴリ名
+   tags: [タグ1, タグ2, タグ3]
+   ---
+
+   任意項目:
+     update: 2026-05-16          ← 更新日（あれば表示される）
+     image: /img/thumb.jpg       ← 記事詳細ページのサムネイル画像
+
+3. Front Matter の下に本文を Markdown で書く
+
+4. ターミナルで以下を実行して posts.json を更新する
+
+   python -X utf8 tools/generate_posts.py
+
+5. デプロイする（後述）
+
+【記事の削除】
+  blog/posts/ から .md ファイルを削除して手順4を実行する
+
+
+----------------------------------------------------------------
+  アフィリエイトリンクを変更する
+----------------------------------------------------------------
+
+【ファイル】
+  assets/components/sidebar.html
+
+「アフィリエイトウィジェット」と書かれたコメントブロック内の
+<script> タグを差し替えるだけで、全ページのサイドバー広告が一括変更される。
+
+DLsite ウィジェットの主な設定項目:
+  "count": "5"         → 表示件数
+  "period": "month"    → 集計期間（"week", "day" も可）
+  "site": "maniax"     → 対象サイト（"books", "girls" なども可）
+
+
+----------------------------------------------------------------
+  Google Search Console の設定
+----------------------------------------------------------------
+
+【手順】
+1. https://search.google.com/search-console を開く
+
+2. 「プロパティを追加」→「URLプレフィックス」を選択
+   URL: https://chikennokura.accees7106.workers.dev
+
+3. 「HTMLタグ」による確認を選択
+   表示された content="..." の値をコピーする
+
+4. assets/components/header.html を開き、以下の行を編集する
+
+   <meta name="google-site-verification" content="ここに貼り付ける" />
+
+5. デプロイ後、Search Console で「確認」ボタンを押す
+
+6. サイトマップを登録する
+   Search Console → サイトマップ → 以下を入力して送信:
+   sitemap.xml
+
+
+----------------------------------------------------------------
+  アナリティクスの設定（GA4 + Cloudflare Web Analytics）
+----------------------------------------------------------------
+
+【Google Analytics 4】
+
+1. https://analytics.google.com を開く
+2. 管理 → プロパティを作成 → ウェブを選択
+3. URL に https://chikennokura.accees7106.workers.dev を入力
+4. 「測定ID」（G-XXXXXXXXXX）をコピー
+5. assets/components/header.html を開き、GA4 のコメントブロックを探す
+6. コメントアウト（<!-- -->）を外して、G-XXXXXXXXXX を測定IDに置き換える
+7. デプロイする
+
+【Cloudflare Web Analytics】
+
+1. https://dash.cloudflare.com を開く
+2. 左メニュー「Web Analytics」→「サイトを追加」
+3. サイトのURLを入力
+4. 表示された <script> タグをコピー
+5. assets/components/header.html の Cloudflare Analytics のコメントブロックを探す
+6. コメントアウトを外してトークンを置き換える
+7. デプロイする
+
+
+----------------------------------------------------------------
+  アンケートDB のセットアップ（初回のみ）
+----------------------------------------------------------------
+
+アンケート機能を使うには Cloudflare D1 データベースの作成が必要です。
+以下の手順を一度だけ実行してください。
+
+【手順】
+
+1. D1 データベースを作成する
+   ターミナルで実行:
+
+   npx wrangler d1 create chikennokura-survey
+
+   実行後に表示される database_id をコピーする（例: abc123-...）
+
+2. wrangler.jsonc を開き、以下の箇所に貼り付ける
+
+   "database_id": "REPLACE_WITH_YOUR_DATABASE_ID"
+                   ↓
+   "database_id": "abc123-..."  ← コピーした値
+
+3. テーブルを作成する（本番環境）
+
+   npx wrangler d1 execute chikennokura-survey --file=tools/init-survey-db.sql
+
+4. テーブルを作成する（ローカル確認用）
+
+   npx wrangler d1 execute chikennokura-survey --local --file=tools/init-survey-db.sql
+
+5. デプロイする
+
+   npx wrangler deploy
+
+以降はアンケートの回答が自動的に D1 に保存され、
+data/ ページでリアルタイムに集計結果が表示されます。
+
+
+----------------------------------------------------------------
+  ローカルで動作確認する
+----------------------------------------------------------------
+
+【自動リロードあり（推奨・アンケートAPIなし）】
+
+  npx live-server
+
+  → http://127.0.0.1:8080 で確認できる
+  → ファイル保存のたびに自動リロード
+  ※ Worker（API）は動かないため、アンケート送信・結果表示はエラーになる
+
+【Workerも含めてローカルで動かす（アンケートAPIあり）】
+
+  npx wrangler dev
+
+  → http://localhost:8787 で確認できる
+  → アンケートの送信・集計も動作する
+  ※ ループする場合は Ctrl+C で止めて live-server を使う
+
+
+----------------------------------------------------------------
+  Cloudflare にデプロイする（本番公開）
+----------------------------------------------------------------
+
+【通常のデプロイ手順】
+
+  cd G:\マイドライブ\HandmadeApplication\chikennokura
+  npx wrangler deploy
+
+  → 本番URL: https://chikennokura.accees7106.workers.dev
+
+【初回ログインが必要な場合】
+
+  npx wrangler login
+
+【Git にも保存しておく】
+
+  git add .
+  git commit -m "変更内容のメモ"
+  git push origin main
+
+
+----------------------------------------------------------------
+  デザイン・見た目を変更する
+----------------------------------------------------------------
+
+【サイト全体の色・レイアウト】
+  assets/css/style.css の先頭 :root { } 内の変数を変える
+
+    --primary: #4a90e2;    ← リンク・ボタンの青色
+    --bg: #f8fafc;         ← ページ背景色
+    --text: #334155;       ← 本文テキスト色
+
+【記事詳細ページ】   assets/css/post.css
+
+【DATAページ】       assets/css/data.css
+
+【ヘッダー/フッター】
+  assets/components/header.html または footer.html 内の <style> を直接編集する
+
+
+----------------------------------------------------------------
+  新しいページを追加する
+----------------------------------------------------------------
+
+1. template.html をコピーして新しいページを作る
+2. <aside id="common-sidebar"></aside> を置くだけでサイドバーが自動表示される
+3. ナビゲーションに追加したい場合は assets/components/header.html の <nav> を編集する
+
+
+----------------------------------------------------------------
+  よく使うコマンド一覧
+----------------------------------------------------------------
+
+# posts.json とサイトマップを再生成
+python -X utf8 tools/generate_posts.py
+
+# ローカル確認（自動リロードあり）
+npx live-server
+
+# ローカル確認（Worker API含む）
+npx wrangler dev
+
+# 本番デプロイ
+npx wrangler deploy
+
+# Cloudflare ログイン（初回）
+npx wrangler login
+
+# D1 データベース作成（初回）
+npx wrangler d1 create chikennokura-survey
+
+# D1 テーブル初期化（初回・本番）
+npx wrangler d1 execute chikennokura-survey --file=tools/init-survey-db.sql
+
+# D1 テーブル初期化（初回・ローカル）
+npx wrangler d1 execute chikennokura-survey --local --file=tools/init-survey-db.sql
+
+# Git 保存 & プッシュ
+git add .
+git commit -m "コメント"
+git push origin main
+
+================================================================

@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DATA | わたくしのインターネット備忘録</title>
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/data.css">
+    <script src="/assets/js/common.js" defer></script>
+</head>
+<body>
+    <div id="common-header"></div>
+
+    <div class="container">
+        <main>
+
+            <!-- ========== アンケートフォーム ========== -->
+            <section class="data-card" id="survey-section">
+                <h2 class="data-card-title">📋 読者アンケート</h2>
+                <p class="data-card-desc">サイト改善のためにご協力ください。所要時間：約1分</p>
+
+                <form id="survey-form">
+                    <div class="q-block">
+                        <p class="q-label">Q1. 好きなコンテンツは何ですか？</p>
+                        <div class="radio-group">
+                            <label><input type="radio" name="content" value="技術・プログラミング" required> 技術・プログラミング</label>
+                            <label><input type="radio" name="content" value="自作キーボード・ガジェット"> 自作キーボード・ガジェット</label>
+                            <label><input type="radio" name="content" value="お出かけ・日常"> お出かけ・日常</label>
+                            <label><input type="radio" name="content" value="全部好き"> 全部好き</label>
+                        </div>
+                    </div>
+
+                    <div class="q-block">
+                        <p class="q-label">Q2. このサイトをどこで知りましたか？</p>
+                        <div class="radio-group">
+                            <label><input type="radio" name="discovery" value="Google検索" required> Google検索</label>
+                            <label><input type="radio" name="discovery" value="Twitter / X"> Twitter / X</label>
+                            <label><input type="radio" name="discovery" value="知人の紹介"> 知人の紹介</label>
+                            <label><input type="radio" name="discovery" value="その他"> その他</label>
+                        </div>
+                    </div>
+
+                    <div class="q-block">
+                        <p class="q-label">Q3. どれくらいの頻度で訪問しますか？</p>
+                        <div class="radio-group">
+                            <label><input type="radio" name="frequency" value="毎日チェック" required> 毎日チェック</label>
+                            <label><input type="radio" name="frequency" value="週に数回"> 週に数回</label>
+                            <label><input type="radio" name="frequency" value="月に数回"> 月に数回</label>
+                            <label><input type="radio" name="frequency" value="はじめて来た"> はじめて来た</label>
+                        </div>
+                    </div>
+
+                    <div class="q-block">
+                        <p class="q-label">Q4. 年代を教えてください</p>
+                        <div class="radio-group">
+                            <label><input type="radio" name="age" value="10代" required> 10代</label>
+                            <label><input type="radio" name="age" value="20代"> 20代</label>
+                            <label><input type="radio" name="age" value="30代"> 30代</label>
+                            <label><input type="radio" name="age" value="40代以上"> 40代以上</label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="submit-btn" id="submit-btn">回答を送信する</button>
+                    <p id="form-msg" class="form-msg"></p>
+                </form>
+            </section>
+
+            <!-- ========== アンケート結果 ========== -->
+            <section class="data-card" id="results-section">
+                <h2 class="data-card-title">📊 アンケート結果</h2>
+                <p class="data-card-desc">みんなの回答をリアルタイムで集計しています</p>
+                <p id="total-count" class="total-count">読み込み中...</p>
+
+                <div id="charts-area">
+                    <div class="chart-block">
+                        <h3 class="chart-title">Q1. 好きなコンテンツ</h3>
+                        <div id="chart-content" class="chart"></div>
+                    </div>
+                    <div class="chart-block">
+                        <h3 class="chart-title">Q2. 知ったきっかけ</h3>
+                        <div id="chart-discovery" class="chart"></div>
+                    </div>
+                    <div class="chart-block">
+                        <h3 class="chart-title">Q3. 訪問頻度</h3>
+                        <div id="chart-frequency" class="chart"></div>
+                    </div>
+                    <div class="chart-block">
+                        <h3 class="chart-title">Q4. 年代</h3>
+                        <div id="chart-age" class="chart"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ========== アナリティクス情報 ========== -->
+            <section class="data-card">
+                <h2 class="data-card-title">📈 アナリティクス</h2>
+                <p class="data-card-desc">このサイトのアクセス状況です</p>
+
+                <div class="analytics-grid">
+                    <div class="analytics-item">
+                        <div class="analytics-icon">☁️</div>
+                        <div class="analytics-name">Cloudflare Web Analytics</div>
+                        <div class="analytics-status status-pending">設定待ち</div>
+                        <p class="analytics-desc">Cloudflare ダッシュボードで確認できます。<br>
+                        設定方法は howto.txt を参照してください。</p>
+                        <a href="https://dash.cloudflare.com" target="_blank" class="analytics-link">ダッシュボードを開く →</a>
+                    </div>
+
+                    <div class="analytics-item">
+                        <div class="analytics-icon">📊</div>
+                        <div class="analytics-name">Google Analytics 4</div>
+                        <div class="analytics-status status-pending">設定待ち</div>
+                        <p class="analytics-desc">GA4 の測定IDを header.html に設定すると有効になります。<br>
+                        設定後はこちらからデータを確認できます。</p>
+                        <a href="https://analytics.google.com" target="_blank" class="analytics-link">GA4 を開く →</a>
+                    </div>
+
+                    <div class="analytics-item">
+                        <div class="analytics-icon">🔍</div>
+                        <div class="analytics-name">Google Search Console</div>
+                        <div class="analytics-status status-pending">設定待ち</div>
+                        <p class="analytics-desc">認証コードを header.html に設定してサイトを登録すると、<br>
+                        検索クリック数・表示回数などが確認できます。</p>
+                        <a href="https://search.google.com/search-console" target="_blank" class="analytics-link">Search Console を開く →</a>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <aside id="common-sidebar"></aside>
+    </div>
+
+    <div id="common-footer"></div>
+
+    <script>
+        // ---- アンケート送信 ----
+        document.getElementById('survey-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('submit-btn');
+            const msg = document.getElementById('form-msg');
+            const form = e.target;
+
+            const data = {
+                content:   form.content.value,
+                discovery: form.discovery.value,
+                frequency: form.frequency.value,
+                age:       form.age.value,
+            };
+
+            btn.disabled = true;
+            btn.textContent = '送信中...';
+            msg.textContent = '';
+            msg.className = 'form-msg';
+
+            try {
+                const res = await fetch('/api/survey', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data),
+                });
+                const json = await res.json();
+
+                if (json.success) {
+                    msg.textContent = '回答ありがとうございます！結果に反映されました。';
+                    msg.classList.add('form-msg-ok');
+                    form.reset();
+                    loadResults(); // 結果を再取得
+                } else {
+                    throw new Error(json.error || '送信に失敗しました');
+                }
+            } catch (err) {
+                msg.textContent = `エラー: ${err.message}`;
+                msg.classList.add('form-msg-err');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '回答を送信する';
+            }
+        });
+
+        // ---- アンケート結果の読み込みと描画 ----
+        async function loadResults() {
+            try {
+                const res = await fetch('/api/survey/results');
+                const data = await res.json();
+
+                if (data.error) throw new Error(data.error);
+
+                document.getElementById('total-count').textContent =
+                    `現在 ${data.total} 件の回答が集まっています`;
+
+                renderChart('chart-content',   data.byContent,   data.total);
+                renderChart('chart-discovery', data.byDiscovery, data.total);
+                renderChart('chart-frequency', data.byFrequency, data.total);
+                renderChart('chart-age',       data.byAge,       data.total);
+
+            } catch (err) {
+                document.getElementById('total-count').textContent =
+                    'アンケートデータを取得できませんでした（D1 データベースの設定を確認してください）';
+                document.getElementById('charts-area').style.display = 'none';
+            }
+        }
+
+        function renderChart(containerId, rows, total) {
+            const container = document.getElementById(containerId);
+            if (!rows || rows.length === 0) {
+                container.innerHTML = '<p class="no-data">まだ回答がありません</p>';
+                return;
+            }
+            container.innerHTML = rows.map(row => {
+                const pct = total > 0 ? Math.round((row.count / total) * 100) : 0;
+                return `
+                    <div class="bar-row">
+                        <span class="bar-label">${row.label}</span>
+                        <div class="bar-track">
+                            <div class="bar-fill" style="width: ${pct}%"></div>
+                        </div>
+                        <span class="bar-stat">${row.count}件 (${pct}%)</span>
+                    </div>`;
+            }).join('');
+        }
+
+        window.addEventListener('DOMContentLoaded', loadResults);
+    </script>
+</body>
+</html>

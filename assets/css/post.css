@@ -1,0 +1,201 @@
+/* ========== 記事エリア（.container 内の main） ========== */
+
+.post-main {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    min-width: 0;
+}
+
+/* ========== ステータスブロック ========== */
+
+.post-status-block {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.status-loading {
+    color: #94a3b8;
+    font-size: 0.9rem;
+}
+
+.post-thumb {
+    width: 100%;
+    max-height: 300px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+}
+
+.status-meta-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.status-readtime {
+    font-size: 0.85rem;
+    color: #94a3b8;
+    white-space: nowrap;
+}
+
+.status-title {
+    font-size: 1.9rem;
+    font-weight: bold;
+    color: #1e293b;
+    margin: 0;
+    line-height: 1.3;
+}
+
+.status-description {
+    font-size: 1rem;
+    color: #64748b;
+    margin: 0;
+    line-height: 1.6;
+}
+
+.status-dates {
+    display: flex;
+    gap: 1.5rem;
+    font-size: 0.85rem;
+    color: #94a3b8;
+    flex-wrap: wrap;
+}
+
+.status-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding-top: 0.25rem;
+    border-top: 1px solid #f1f5f9;
+}
+
+/* ========== 本文ブロック ========== */
+
+.post-body-block {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    padding: 2.5rem;
+    line-height: 1.9;
+    color: #334155;
+    font-size: 1rem;
+}
+
+/* 見出し */
+.post-body-block h1,
+.post-body-block h2,
+.post-body-block h3,
+.post-body-block h4 {
+    color: #1e293b;
+    margin: 2rem 0 0.75rem;
+    line-height: 1.4;
+}
+
+.post-body-block h1 { font-size: 1.6rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.4rem; }
+.post-body-block h2 { font-size: 1.35rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.3rem; }
+.post-body-block h3 { font-size: 1.15rem; }
+.post-body-block h4 { font-size: 1rem; color: #475569; }
+
+/* 段落・リスト */
+.post-body-block p  { margin: 0 0 1.2rem; }
+.post-body-block ul,
+.post-body-block ol { margin: 0 0 1.2rem; padding-left: 1.5rem; }
+.post-body-block li { margin-bottom: 0.4rem; }
+
+/* リンク */
+.post-body-block a {
+    color: #4a90e2;
+    text-decoration: none;
+}
+.post-body-block a:hover {
+    text-decoration: underline;
+}
+
+/* 引用 */
+.post-body-block blockquote {
+    margin: 1.5rem 0;
+    padding: 0.75rem 1.25rem;
+    border-left: 4px solid #4a90e2;
+    background: #f0f7ff;
+    color: #475569;
+    border-radius: 0 8px 8px 0;
+}
+.post-body-block blockquote p { margin: 0; }
+
+/* インラインコード */
+.post-body-block code {
+    background: #f1f5f9;
+    padding: 0.15em 0.4em;
+    border-radius: 4px;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 0.875em;
+    color: #e11d48;
+}
+
+/* コードブロック */
+.post-body-block pre {
+    background: #1e293b;
+    padding: 1.25rem 1.5rem;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin: 1.5rem 0;
+}
+.post-body-block pre code {
+    background: none;
+    color: #e2e8f0;
+    padding: 0;
+    font-size: 0.9em;
+}
+
+/* 画像 */
+.post-body-block img {
+    max-width: 100%;
+    border-radius: 8px;
+    margin: 1rem 0;
+    display: block;
+}
+
+/* 区切り線 */
+.post-body-block hr {
+    border: none;
+    border-top: 1px solid #e2e8f0;
+    margin: 2rem 0;
+}
+
+/* テーブル */
+.post-body-block table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+    font-size: 0.95rem;
+}
+.post-body-block th,
+.post-body-block td {
+    border: 1px solid #e2e8f0;
+    padding: 0.6rem 1rem;
+    text-align: left;
+}
+.post-body-block th {
+    background: #f8fafc;
+    font-weight: bold;
+    color: #1e293b;
+}
+.post-body-block tr:nth-child(even) td {
+    background: #f8fafc;
+}
+
+/* ========== レスポンシブ ========== */
+
+@media (max-width: 640px) {
+    .post-page-container { padding: 0 1rem; margin: 1.5rem auto; }
+    .post-status-block  { padding: 1.5rem; }
+    .post-body-block    { padding: 1.5rem; }
+    .status-title       { font-size: 1.5rem; }
+}

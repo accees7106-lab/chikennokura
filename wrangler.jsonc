@@ -1,6 +1,7 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "chikennokura",
+  "main": "worker.js",
   "compatibility_date": "2026-05-09",
   "observability": {
     "enabled": true
@@ -10,5 +11,21 @@
   },
   "compatibility_flags": [
     "nodejs_compat"
+  ],
+
+  // -------------------------------------------------------
+  // D1 データベース（アンケート保存用）
+  // セットアップ手順:
+  //   1. npx wrangler d1 create chikennokura-survey
+  //   2. 表示された database_id を下の "REPLACE_WITH_YOUR_DATABASE_ID" に貼り付ける
+  //   3. npx wrangler d1 execute chikennokura-survey --file=tools/init-survey-db.sql
+  //   4. npx wrangler d1 execute chikennokura-survey --local --file=tools/init-survey-db.sql
+  // -------------------------------------------------------
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "chikennokura-survey",
+      "database_id": "REPLACE_WITH_YOUR_DATABASE_ID"
+    }
   ]
 }

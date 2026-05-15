@@ -2,92 +2,109 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>BLOG | サイト名</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>記事 | わたくしのインターネット備忘録</title>
     <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/post.css">
     <script src="/assets/js/common.js" defer></script>
-    <!-- 軽量マークダウン変換ライブラリ -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
     <div id="common-header"></div>
 
-    <main class="container" style="flex-direction: column; align-items: center;">
-        <!-- ここにマークダウンがHTMLとして流し込まれます -->
-        <article id="markdown-content" class="post-card" style="width: 100%; max-width: 800px;">
-            <header id="post-header" class="post-header"></header>
-            <div id="post-body"></div>
-        </article>
-    </main>
+    <div class="container">
+        <main class="post-main">
+
+            <!-- ステータスブロック -->
+            <div id="post-status" class="post-status-block">
+                <div id="status-loading" class="status-loading">読み込み中...</div>
+            </div>
+
+            <!-- 本文エリア -->
+            <article id="post-body" class="post-body-block"></article>
+
+        </main>
+
+        <aside id="common-sidebar"></aside>
+    </div>
 
     <div id="common-footer"></div>
 
     <script>
-                async function loadPost() {
+        async function loadPost() {
             const params = new URLSearchParams(window.location.search);
             const postId = params.get('id');
-            if (!postId) return;
+            if (!postId) {
+                document.getElementById('post-status').innerHTML = '<p>記事が見つかりませんでした。</p>';
+                return;
+            }
 
             try {
                 const response = await fetch(`/blog/posts/${postId}.md`);
+                if (!response.ok) throw new Error('記事の取得に失敗しましたわ');
                 const text = await response.text();
 
-                // Front Matter を解析する正規表現（天才的な呪文ですわ）
+                // Front Matter を解析
                 const match = text.match(/^---\r?\n([\s\S]+?)\r?\n---/);
                 let content = text;
-                let metadata = {};
+                let meta = {};
 
                 if (match) {
-                    // メタデータ部分を抽出
-                    const yamlText = match[1];
-                    yamlText.split('\n').forEach(line => {
-                        const [key, ...value] = line.split(':');
-                        if (key && value) metadata[key.trim()] = value.join(':').trim();
+                    match[1].split('\n').forEach(line => {
+                        const colonIdx = line.indexOf(':');
+                        if (colonIdx === -1) return;
+                        const key = line.slice(0, colonIdx).trim();
+                        const val = line.slice(colonIdx + 1).trim();
+                        if (key) meta[key] = val;
                     });
-                    // 本文から Front Matter 部分を削除
-                    content = text.replace(match[0], '');
+                    content = text.slice(match[0].length).trim();
                 }
 
-                // 読了時間の計算 (1分間に400文字読むと想定)
-                const readTime = Math.ceil(content.length / 400);
+                const readMin = Math.max(1, Math.ceil(content.length / 400));
 
-                // メタデータを画面に表示
-                renderMetadata(metadata, readTime);
+                renderStatus(meta, readMin);
+                renderBody(content);
 
-                // 本文をHTMLに変換
-                document.getElementById('post-body').innerHTML = marked.parse(content);
+                if (meta.title) {
+                    document.title = `${meta.title} | わたくしのインターネット備忘録`;
+                }
 
-            } catch (error) {
-                console.error("解析エラーですわ！", error);
+            } catch (err) {
+                console.error(err);
+                document.getElementById('post-status').innerHTML = '<p>記事の読み込みに失敗しましたわ...</p>';
             }
         }
 
-        function renderMetadata(data, time) {
-            const header = document.getElementById('post-header');
-            if (!header) return;
+        function renderStatus(meta, readMin) {
+            const tags = meta.tags
+                ? meta.tags.replace(/[\[\]]/g, '').split(',')
+                    .map(t => t.trim()).filter(Boolean)
+                    .map(t => `<a href="/blog/index.html?tag=${encodeURIComponent(t)}" class="tag">#${t}</a>`)
+                    .join('')
+                : '';
 
-            // ページタイトルを記事名に更新
-            if (data.title) {
-                document.title = `${data.title} | わたくしのインターネット備忘録`;
-            }
+            const imageHtml = meta.image
+                ? `<img src="${meta.image}" alt="${meta.title || ''}" class="post-thumb">`
+                : '';
 
-            // タグを配列にしてリンク風にする処理
-            const tagsHtml = data.tags ? data.tags.replace(/[\[\]]/g, '').split(',').map(tag => {
-                const trimmedTag = tag.trim();
-                return `<a href="/blog/index.html?tag=${encodeURIComponent(trimmedTag)}" class="tag">#${trimmedTag}</a>`;
-            }).join(' ') : '';
-
-            header.innerHTML = `
-                <a href="/blog/index.html?category=${encodeURIComponent(data.category || '未分類')}" class="category">${data.category || '未分類'}</a>
-                <h1 class="post-title">${data.title || '無題の記事'}</h1>
-                <p class="description">${data.description || ''}</p>
-                <div class="post-info">
-                    <span>📅 投稿: ${data.date || '----'}</span>
-                    ${data.update ? `<span>🔄 更新: ${data.update}</span>` : ''}
-                    <span>⏱️ 読了目安: 約${time}分</span>
+            document.getElementById('post-status').innerHTML = `
+                ${imageHtml}
+                <div class="status-meta-row">
+                    <a href="/blog/index.html?category=${encodeURIComponent(meta.category || '未分類')}" class="category">${meta.category || '未分類'}</a>
+                    <span class="status-readtime">⏱ 約${readMin}分</span>
                 </div>
-                <div class="tags-container">${tagsHtml}</div>
-                <hr>
+                <h1 class="status-title">${meta.title || '無題の記事'}</h1>
+                ${meta.description ? `<p class="status-description">${meta.description}</p>` : ''}
+                <div class="status-dates">
+                    <span>📅 投稿: ${meta.date || '----'}</span>
+                    ${meta.update ? `<span>🔄 更新: ${meta.update}</span>` : ''}
+                </div>
+                ${tags ? `<div class="status-tags">${tags}</div>` : ''}
             `;
+        }
+
+        function renderBody(content) {
+            document.getElementById('post-body').innerHTML = marked.parse(content);
         }
 
         window.addEventListener('DOMContentLoaded', loadPost);

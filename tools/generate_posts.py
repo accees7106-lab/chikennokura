@@ -57,8 +57,8 @@ def main():
     posts_dir = os.path.join(base_dir, 'blog', 'posts')
     output_file = os.path.join(base_dir, 'blog', 'posts.json')
     
-    # サイトのベースURL（Search Console用に適宜変更してください）
-    base_url = "https://chikennokura.pages.dev" 
+    # サイトのベースURL（独自ドメインを取得したらそちらに変更してください）
+    base_url = "https://chikennokura.accees7106.workers.dev"
 
     print(f"Scanning directory: {posts_dir}")
 
