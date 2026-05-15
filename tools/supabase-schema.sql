@@ -33,9 +33,11 @@ CREATE INDEX IF NOT EXISTS idx_events_properties ON events USING GIN (properties
 ALTER TABLE visitor_profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE events           ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "anon_insert_visitor_profiles" ON visitor_profiles;
 CREATE POLICY "anon_insert_visitor_profiles"
     ON visitor_profiles FOR INSERT TO anon WITH CHECK (true);
 
+DROP POLICY IF EXISTS "anon_insert_events" ON events;
 CREATE POLICY "anon_insert_events"
     ON events FOR INSERT TO anon WITH CHECK (true);
 
