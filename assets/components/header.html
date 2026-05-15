@@ -1,38 +1,145 @@
 <header>
-    <h1>わたくしのインターネット備忘録</h1>
-    <nav>
+    <a class="site-title" href="/">chikennokura</a>
+    <nav class="desktop-nav">
         <ul>
-        <li><a href="/">HOME</a></li>
-        <li><a href="/blog/">BLOG</a></li>
-        <li><a href="/data/">DATA</a></li>
-        <li><a href="/about/">ABOUT</a></li>
-</ul>
+            <li><a href="/">HOME</a></li>
+            <li><a href="/blog/">BLOG</a></li>
+            <li><a href="/data/">DATA</a></li>
+        </ul>
     </nav>
+    <button class="hamburger" id="hamburger-btn" aria-label="メニュー">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
 </header>
 
+<div class="mobile-menu" id="mobile-menu">
+    <nav>
+        <ul>
+            <li><a href="/">HOME</a></li>
+            <li><a href="/blog/">BLOG</a></li>
+            <li><a href="/data/">DATA</a></li>
+        </ul>
+    </nav>
+</div>
+
 <style>
-    /* ヘッダー専用のスタイル */
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&family=Akshar:wght@400;500&family=Inter:wght@400;700&display=swap');
+
     header {
-        background: #ffffff;
-        padding: 1.5rem;
-        text-align: center;
-        border-bottom: 3px solid #4a90e2;
+        background: #e8a8ff;
+        border-bottom: 4px solid #ff4096;
+        padding: 0 2rem;
+        height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: sticky;
+        top: 0;
+        z-index: 100;
     }
-    nav ul {
+
+    .site-title {
+        font-family: 'Space Grotesk', sans-serif;
+        font-weight: 700;
+        font-size: 2.2rem;
+        color: #000;
+        text-decoration: none;
+        letter-spacing: -0.02em;
+    }
+
+    .desktop-nav ul {
         list-style: none;
         padding: 0;
+        margin: 0;
         display: flex;
-        justify-content: center;
-        gap: 20px;
-        margin-top: 1rem;
+        gap: 16px;
+        align-items: center;
     }
-    nav a {
+
+    .desktop-nav ul li a {
+        display: inline-block;
+        background: #d9d9d9;
+        border-radius: 63px;
+        padding: 8px 24px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 700;
+        font-size: 1rem;
+        color: #000;
         text-decoration: none;
-        color: #333;
-        font-weight: bold;
-        font-size: 0.9rem;
+        transition: background 0.2s;
     }
-    nav a:hover {
-        color: #4a90e2;
+
+    .desktop-nav ul li a:hover,
+    .desktop-nav ul li a[aria-current="page"] {
+        background: #ff4096;
+        color: #fff;
+    }
+
+    .hamburger {
+        display: none;
+        flex-direction: column;
+        gap: 6px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 4px;
+    }
+
+    .hamburger span {
+        display: block;
+        width: 30px;
+        height: 4px;
+        background: #000;
+        border-radius: 2px;
+    }
+
+    .mobile-menu {
+        display: none;
+        background: #e8a8ff;
+        border-bottom: 2px solid #ff4096;
+        padding: 1rem 2rem;
+        position: sticky;
+        top: 84px;
+        z-index: 99;
+    }
+
+    .mobile-menu.open {
+        display: block;
+    }
+
+    .mobile-menu ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .mobile-menu ul li a {
+        display: block;
+        background: #d9d9d9;
+        border-radius: 63px;
+        padding: 10px 24px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 700;
+        font-size: 1rem;
+        color: #000;
+        text-decoration: none;
+        text-align: center;
+    }
+
+    @media (max-width: 768px) {
+        .desktop-nav { display: none; }
+        .hamburger { display: flex; }
+        .site-title { font-size: 1.6rem; }
     }
 </style>
+
+<script>
+    document.getElementById('hamburger-btn').addEventListener('click', function() {
+        document.getElementById('mobile-menu').classList.toggle('open');
+    });
+</script>
