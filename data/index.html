@@ -15,113 +15,110 @@
     <div class="container">
         <main>
 
-            <!-- ========== アンケートフォーム ========== -->
-            <section class="data-card" id="survey-section">
-                <h2 class="data-card-title">📋 読者アンケート</h2>
-                <p class="data-card-desc">サイト改善のためにご協力ください。所要時間：約1分</p>
-
-                <form id="survey-form">
-                    <div class="q-block">
-                        <p class="q-label">Q1. 好きなコンテンツは何ですか？</p>
-                        <div class="radio-group">
-                            <label><input type="radio" name="content" value="技術・プログラミング" required> 技術・プログラミング</label>
-                            <label><input type="radio" name="content" value="自作キーボード・ガジェット"> 自作キーボード・ガジェット</label>
-                            <label><input type="radio" name="content" value="お出かけ・日常"> お出かけ・日常</label>
-                            <label><input type="radio" name="content" value="全部好き"> 全部好き</label>
-                        </div>
+            <!-- ========== KPI ========== -->
+            <section class="data-card">
+                <h2 class="data-card-title">📊 サマリー</h2>
+                <p class="data-card-desc">訪問者の行動データをもとにした概要です</p>
+                <div class="kpi-grid kpi-grid-4">
+                    <div class="kpi-item">
+                        <div class="kpi-value" id="kpi-visitors">—</div>
+                        <div class="kpi-label">ユニーク訪問者</div>
                     </div>
-
-                    <div class="q-block">
-                        <p class="q-label">Q2. このサイトをどこで知りましたか？</p>
-                        <div class="radio-group">
-                            <label><input type="radio" name="discovery" value="Google検索" required> Google検索</label>
-                            <label><input type="radio" name="discovery" value="Twitter / X"> Twitter / X</label>
-                            <label><input type="radio" name="discovery" value="知人の紹介"> 知人の紹介</label>
-                            <label><input type="radio" name="discovery" value="その他"> その他</label>
-                        </div>
+                    <div class="kpi-item">
+                        <div class="kpi-value" id="kpi-pageviews">—</div>
+                        <div class="kpi-label">総ページビュー</div>
                     </div>
-
-                    <div class="q-block">
-                        <p class="q-label">Q3. どれくらいの頻度で訪問しますか？</p>
-                        <div class="radio-group">
-                            <label><input type="radio" name="frequency" value="毎日チェック" required> 毎日チェック</label>
-                            <label><input type="radio" name="frequency" value="週に数回"> 週に数回</label>
-                            <label><input type="radio" name="frequency" value="月に数回"> 月に数回</label>
-                            <label><input type="radio" name="frequency" value="はじめて来た"> はじめて来た</label>
-                        </div>
+                    <div class="kpi-item">
+                        <div class="kpi-value" id="kpi-avg">—</div>
+                        <div class="kpi-label">平均 PV / 訪問者</div>
                     </div>
-
-                    <div class="q-block">
-                        <p class="q-label">Q4. 年代を教えてください</p>
-                        <div class="radio-group">
-                            <label><input type="radio" name="age" value="10代" required> 10代</label>
-                            <label><input type="radio" name="age" value="20代"> 20代</label>
-                            <label><input type="radio" name="age" value="30代"> 30代</label>
-                            <label><input type="radio" name="age" value="40代以上"> 40代以上</label>
-                        </div>
-                    </div>
-
-                    <button type="submit" class="submit-btn" id="submit-btn">回答を送信する</button>
-                    <p id="form-msg" class="form-msg"></p>
-                </form>
-            </section>
-
-            <!-- ========== アンケート結果 ========== -->
-            <section class="data-card" id="results-section">
-                <h2 class="data-card-title">📊 アンケート結果</h2>
-                <p class="data-card-desc">みんなの回答をリアルタイムで集計しています</p>
-                <p id="total-count" class="total-count">読み込み中...</p>
-
-                <div id="charts-area">
-                    <div class="chart-block">
-                        <h3 class="chart-title">Q1. 好きなコンテンツ</h3>
-                        <div id="chart-content" class="chart"></div>
-                    </div>
-                    <div class="chart-block">
-                        <h3 class="chart-title">Q2. 知ったきっかけ</h3>
-                        <div id="chart-discovery" class="chart"></div>
-                    </div>
-                    <div class="chart-block">
-                        <h3 class="chart-title">Q3. 訪問頻度</h3>
-                        <div id="chart-frequency" class="chart"></div>
-                    </div>
-                    <div class="chart-block">
-                        <h3 class="chart-title">Q4. 年代</h3>
-                        <div id="chart-age" class="chart"></div>
+                    <div class="kpi-item kpi-item-accent">
+                        <div class="kpi-value" id="kpi-engage">—</div>
+                        <div class="kpi-label">エンゲージメント率</div>
+                        <div class="kpi-sub">2ページ以上閲覧した訪問者</div>
                     </div>
                 </div>
             </section>
 
-            <!-- ========== アナリティクス情報 ========== -->
+            <!-- ========== アクセスパターン ========== -->
             <section class="data-card">
-                <h2 class="data-card-title">📈 アナリティクス</h2>
-                <p class="data-card-desc">このサイトのアクセス状況です</p>
+                <h2 class="data-card-title">🕐 アクセスパターン</h2>
+                <p class="data-card-desc">いつ訪問されているかを日本時間で集計しています</p>
 
+                <div class="pattern-grid">
+                    <div>
+                        <h3 class="chart-title">時間帯別（0〜23時）</h3>
+                        <div class="time-chart" id="chart-hourly">
+                            <div class="time-bars" id="bars-hourly"></div>
+                            <div class="time-axis">
+                                <span>0</span><span>6</span><span>12</span><span>18</span><span>23</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="chart-title">曜日別</h3>
+                        <div id="chart-weekly"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ========== コンテンツ分析 ========== -->
+            <section class="data-card">
+                <h2 class="data-card-title">📄 コンテンツ分析</h2>
+                <p class="data-card-desc">どのページがよく読まれているかを示しています</p>
+                <div id="chart-pages"><p class="no-data">読み込み中...</p></div>
+            </section>
+
+            <!-- ========== 読者プロフィール ========== -->
+            <section class="data-card">
+                <h2 class="data-card-title">👤 読者プロフィール</h2>
+                <p class="data-card-desc">入場アンケートと流入元から読者像を分析しています</p>
+
+                <div class="profile-analysis-grid">
+                    <div>
+                        <h3 class="chart-title">好みジャンル（複数回答）</h3>
+                        <div id="chart-genres"><p class="no-data">読み込み中...</p></div>
+                    </div>
+                    <div>
+                        <h3 class="chart-title">流入元</h3>
+                        <div id="chart-referrers"><p class="no-data">読み込み中...</p></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ========== 分析インサイト ========== -->
+            <section class="data-card" id="insights-card">
+                <h2 class="data-card-title">💡 分析インサイト</h2>
+                <p class="data-card-desc">データから自動生成した気づきです</p>
+                <div id="insights-list" class="insights-list">
+                    <p class="no-data">データを解析中...</p>
+                </div>
+            </section>
+
+            <!-- ========== 外部アナリティクス ========== -->
+            <section class="data-card">
+                <h2 class="data-card-title">📈 外部アナリティクス</h2>
+                <p class="data-card-desc">連携中の外部サービスの設定状況です</p>
                 <div class="analytics-grid">
                     <div class="analytics-item">
                         <div class="analytics-icon">☁️</div>
                         <div class="analytics-name">Cloudflare Web Analytics</div>
                         <div class="analytics-status status-pending">設定待ち</div>
-                        <p class="analytics-desc">Cloudflare ダッシュボードで確認できます。<br>
-                        設定方法は howto.txt を参照してください。</p>
+                        <p class="analytics-desc">Cloudflare ダッシュボードで確認できます。</p>
                         <a href="https://dash.cloudflare.com" target="_blank" class="analytics-link">ダッシュボードを開く →</a>
                     </div>
-
                     <div class="analytics-item">
                         <div class="analytics-icon">📊</div>
                         <div class="analytics-name">Google Analytics 4</div>
-                        <div class="analytics-status status-pending">設定待ち</div>
-                        <p class="analytics-desc">GA4 の測定IDを header.html に設定すると有効になります。<br>
-                        設定後はこちらからデータを確認できます。</p>
+                        <div class="analytics-status status-ok">設定済み</div>
+                        <p class="analytics-desc">行動フロー・デバイス・詳細な離脱率はGAで確認できます。</p>
                         <a href="https://analytics.google.com" target="_blank" class="analytics-link">GA4 を開く →</a>
                     </div>
-
                     <div class="analytics-item">
                         <div class="analytics-icon">🔍</div>
                         <div class="analytics-name">Google Search Console</div>
                         <div class="analytics-status status-pending">設定待ち</div>
-                        <p class="analytics-desc">認証コードを header.html に設定してサイトを登録すると、<br>
-                        検索クリック数・表示回数などが確認できます。</p>
+                        <p class="analytics-desc">認証コードを header.html に設定すると有効になります。</p>
                         <a href="https://search.google.com/search-console" target="_blank" class="analytics-link">Search Console を開く →</a>
                     </div>
                 </div>
@@ -135,93 +132,169 @@
     <div id="common-footer"></div>
 
     <script>
-        // ---- アンケート送信 ----
-        document.getElementById('survey-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const btn = document.getElementById('submit-btn');
-            const msg = document.getElementById('form-msg');
-            const form = e.target;
+    var DAY_NAMES = ['日', '月', '火', '水', '木', '金', '土'];
 
-            const data = {
-                content:   form.content.value,
-                discovery: form.discovery.value,
-                frequency: form.frequency.value,
-                age:       form.age.value,
-            };
+    async function loadStats() {
+        try {
+            var res  = await fetch('/api/visitor/stats');
+            var data = await res.json();
+            if (data.error) throw new Error(data.error);
 
-            btn.disabled = true;
-            btn.textContent = '送信中...';
-            msg.textContent = '';
-            msg.className = 'form-msg';
+            // KPI
+            document.getElementById('kpi-visitors').textContent  = fmt(data.totalVisitors);
+            document.getElementById('kpi-pageviews').textContent = fmt(data.totalPageviews);
+            document.getElementById('kpi-avg').textContent       = data.avgPv ?? '—';
+            document.getElementById('kpi-engage').textContent    = (data.engagementRate ?? '—') + '%';
 
-            try {
-                const res = await fetch('/api/survey', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data),
-                });
-                const json = await res.json();
+            // 時間帯チャート
+            renderHourly(data.hourly);
 
-                if (json.success) {
-                    msg.textContent = '回答ありがとうございます！結果に反映されました。';
-                    msg.classList.add('form-msg-ok');
-                    form.reset();
-                    loadResults(); // 結果を再取得
-                } else {
-                    throw new Error(json.error || '送信に失敗しました');
-                }
-            } catch (err) {
-                msg.textContent = `エラー: ${err.message}`;
-                msg.classList.add('form-msg-err');
-            } finally {
-                btn.disabled = false;
-                btn.textContent = '回答を送信する';
-            }
-        });
+            // 曜日チャート（月〜日の順）
+            var weekOrder = [1,2,3,4,5,6,0];
+            var weekMap   = {};
+            (data.weekly || []).forEach(function(r){ weekMap[r.dow] = r.count; });
+            var weekRows  = weekOrder.map(function(d){
+                return { label: DAY_NAMES[d] + '曜', count: weekMap[d] || 0 };
+            });
+            renderBars('chart-weekly', weekRows, null, null);
 
-        // ---- アンケート結果の読み込みと描画 ----
-        async function loadResults() {
-            try {
-                const res = await fetch('/api/survey/results');
-                const data = await res.json();
+            // コンテンツ
+            renderBars('chart-pages', data.topPages, null, labelPage);
 
-                if (data.error) throw new Error(data.error);
+            // ジャンル・流入元
+            renderBars('chart-genres',    data.genres,    null, labelGenre);
+            renderBars('chart-referrers', data.referrers, null, null);
 
-                document.getElementById('total-count').textContent =
-                    `現在 ${data.total} 件の回答が集まっています`;
+            // インサイト
+            renderInsights(data);
 
-                renderChart('chart-content',   data.byContent,   data.total);
-                renderChart('chart-discovery', data.byDiscovery, data.total);
-                renderChart('chart-frequency', data.byFrequency, data.total);
-                renderChart('chart-age',       data.byAge,       data.total);
+        } catch(err) {
+            ['kpi-visitors','kpi-pageviews','kpi-avg','kpi-engage'].forEach(function(id){
+                document.getElementById(id).textContent = '?';
+            });
+            ['chart-pages','chart-genres','chart-referrers','chart-weekly'].forEach(function(id){
+                document.getElementById(id).innerHTML =
+                    '<p class="no-data">データを取得できませんでした（Supabase の設定を確認してください）</p>';
+            });
+            document.getElementById('insights-list').innerHTML =
+                '<p class="no-data">インサイトを生成できませんでした</p>';
+        }
+    }
 
-            } catch (err) {
-                document.getElementById('total-count').textContent =
-                    'アンケートデータを取得できませんでした（D1 データベースの設定を確認してください）';
-                document.getElementById('charts-area').style.display = 'none';
+    /* 時間帯ミニバーチャート */
+    function renderHourly(raw) {
+        var map = {};
+        (raw || []).forEach(function(r){ map[r.hour] = r.count; });
+        var hours = Array.from({length: 24}, function(_, h){ return map[h] || 0; });
+        var maxVal = Math.max.apply(null, hours) || 1;
+
+        var barsEl = document.getElementById('bars-hourly');
+        barsEl.innerHTML = hours.map(function(cnt, h){
+            var pct = Math.round((cnt / maxVal) * 100);
+            return '<div class="time-bar" style="height:' + pct + '%" title="' + h + '時: ' + cnt + '件"></div>';
+        }).join('');
+    }
+
+    /* 汎用バーチャート */
+    function renderBars(id, rows, total, labelFn) {
+        var el = document.getElementById(id);
+        if (!rows || rows.length === 0) {
+            el.innerHTML = '<p class="no-data">まだデータがありません</p>';
+            return;
+        }
+        var max = total != null ? total : Math.max.apply(null, rows.map(function(r){ return r.count; }));
+        el.innerHTML = rows.map(function(row){
+            var pct   = max > 0 ? Math.round((row.count / max) * 100) : 0;
+            var label = labelFn ? labelFn(row.label) : row.label;
+            return '<div class="bar-row">'
+                + '<span class="bar-label" title="' + row.label + '">' + label + '</span>'
+                + '<div class="bar-track"><div class="bar-fill" style="width:' + pct + '%"></div></div>'
+                + '<span class="bar-stat">' + row.count + '件</span>'
+                + '</div>';
+        }).join('');
+    }
+
+    /* インサイト自動生成 */
+    function renderInsights(d) {
+        var items = [];
+
+        // エンゲージメント率の評価
+        var eng = parseFloat(d.engagementRate) || 0;
+        if (eng >= 60) {
+            items.push({ icon: '🟢', text: 'エンゲージメント率が <b>' + eng + '%</b> と高く、多くの訪問者が複数ページを閲覧しています。コンテンツの質が評価されているサインです。' });
+        } else if (eng >= 30) {
+            items.push({ icon: '🟡', text: 'エンゲージメント率は <b>' + eng + '%</b> です。内部リンクや関連記事を増やすと回遊率が上がる可能性があります。' });
+        } else if (d.totalPageviews > 0) {
+            items.push({ icon: '🔴', text: 'エンゲージメント率が <b>' + eng + '%</b> と低めです。記事末尾に「関連記事」リンクを追加してみてください。' });
+        }
+
+        // 平均 PV
+        var avg = parseFloat(d.avgPv) || 0;
+        if (avg >= 3) {
+            items.push({ icon: '📖', text: '平均 <b>' + avg + ' ページ / 訪問者</b> と、1回の訪問でしっかり読まれています。' });
+        }
+
+        // ピーク時間帯
+        var map = {};
+        (d.hourly || []).forEach(function(r){ map[r.hour] = r.count; });
+        var hours = Array.from({length:24}, function(_,h){ return { h: h, c: map[h]||0 }; });
+        var peak  = hours.reduce(function(a,b){ return b.c > a.c ? b : a; }, {h:0,c:0});
+        if (peak.c > 0) {
+            items.push({ icon: '⏰', text: 'アクセスのピークは <b>' + peak.h + '時台</b> です。この時間帯に合わせて記事を投稿すると読まれやすくなります。' });
+        }
+
+        // 曜日ピーク
+        var wmap = {};
+        (d.weekly || []).forEach(function(r){ wmap[r.dow] = r.count; });
+        var wPeak = [0,1,2,3,4,5,6].reduce(function(a,b){ return (wmap[b]||0) > (wmap[a]||0) ? b : a; }, 0);
+        if (wmap[wPeak] > 0) {
+            items.push({ icon: '📅', text: '曜日別では <b>' + DAY_NAMES[wPeak] + '曜日</b> のアクセスが最多です。' });
+        }
+
+        // 人気ジャンル
+        if (d.genres && d.genres.length > 0) {
+            items.push({ icon: '💘', text: '読者が最も選んだジャンルは <b>「' + d.genres[0].label + '」</b> です。このジャンルのアフィリエイト商品を優先的に紹介すると収益につながりやすいです。' });
+        }
+
+        // 流入元
+        if (d.referrers && d.referrers.length > 0) {
+            var top = d.referrers[0];
+            if (top.label === 'ダイレクト') {
+                items.push({ icon: '🔁', text: '流入の多くがダイレクトアクセスです。リピーターが多いか、URL を直接知っている読者が中心と考えられます。' });
+            } else {
+                items.push({ icon: '🌐', text: '最大の流入元は <b>' + top.label + '</b> です。このチャネルへの投稿・対策が集客に直結しています。' });
             }
         }
 
-        function renderChart(containerId, rows, total) {
-            const container = document.getElementById(containerId);
-            if (!rows || rows.length === 0) {
-                container.innerHTML = '<p class="no-data">まだ回答がありません</p>';
-                return;
-            }
-            container.innerHTML = rows.map(row => {
-                const pct = total > 0 ? Math.round((row.count / total) * 100) : 0;
-                return `
-                    <div class="bar-row">
-                        <span class="bar-label">${row.label}</span>
-                        <div class="bar-track">
-                            <div class="bar-fill" style="width: ${pct}%"></div>
-                        </div>
-                        <span class="bar-stat">${row.count}件 (${pct}%)</span>
-                    </div>`;
-            }).join('');
+        if (items.length === 0) {
+            items.push({ icon: '📊', text: 'まだデータが少ないため、インサイトを生成できません。訪問者が増えると自動的に分析が充実します。' });
         }
 
-        window.addEventListener('DOMContentLoaded', loadResults);
+        document.getElementById('insights-list').innerHTML = items.map(function(item){
+            return '<div class="insight-item"><span class="insight-icon">' + item.icon + '</span>'
+                + '<p class="insight-text">' + item.text + '</p></div>';
+        }).join('');
+    }
+
+    function fmt(n) { return (n ?? 0).toLocaleString(); }
+
+    function labelPage(path) {
+        var map = { '/': 'HOME', '/index.html': 'HOME', '/blog/': 'ブログ一覧',
+                    '/blog/index.html': 'ブログ一覧', '/data/': 'DATA',
+                    '/data/index.html': 'DATA', '/about/': 'ABOUT', '/about/index.html': 'ABOUT' };
+        if (map[path]) return map[path];
+        var m = path.match(/[?&]id=([^&]+)/);
+        return m ? '記事: ' + decodeURIComponent(m[1]) : path;
+    }
+
+    function labelGenre(g) {
+        var icons = { '巨乳・爆乳':'🍑','ロリ系':'🌸','お姉さん・熟女':'💄',
+                      'NTR・寝取られ':'💔','調教・SM':'⛓','百合・GL':'🌹',
+                      'ショタ':'🧒','触手・モンスター':'👾','バニラ・純愛':'💕','その他':'📌' };
+        return (icons[g] || '') + ' ' + g;
+    }
+
+    window.addEventListener('DOMContentLoaded', loadStats);
     </script>
 </body>
 </html>
