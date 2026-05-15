@@ -20,8 +20,5 @@ worker.js
 howto.txt
 template.html
 
-# Markdown source files (compiled to posts.json)
-blog/posts/*.md
-
 # Dependencies
 node_modules
