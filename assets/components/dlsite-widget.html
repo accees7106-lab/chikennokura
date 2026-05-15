@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<style>
+  body { margin: 0; padding: 0; background: transparent; font-family: sans-serif; }
+</style>
+</head>
+<body>
+<!-- ============================================================
+     DLsite アフィリエイトウィジェット設定
+     変更したい場合: 下の blogparts オブジェクトを編集してください
+       "count"  → 表示件数
+       "period" → 集計期間 ("month" / "week" / "day")
+       "site"   → 対象サイト ("maniax" / "books" / "girls")
+       "aid"    → アフィリエイトID（DLsiteで発行されたIDに変更してください）
+     ============================================================ -->
+<script type="text/javascript">
+blogparts = {
+    "base": "https://www.dlsite.com/",
+    "type": "ranking",
+    "site": "maniax",
+    "query": { "period": "month" },
+    "title": "ランキング",
+    "display": "vertical",
+    "detail": "1",
+    "column": "v",
+    "image": "large",
+    "count": "5",
+    "wrapper": "0",
+    "autorotate": false,
+    "aid": "ZenAi"
+};
+</script>
+<script type="text/javascript" src="https://www.dlsite.com/js/blogparts.js" charset="UTF-8"></script>
+</body>
+</html>
